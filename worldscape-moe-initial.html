@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="UniMoE-World project website draft">
-  <meta name="keywords" content="UniMoE-World, world model, mixture of experts, video generation">
-  <title>UniMoE-World Website Draft</title>
+  <meta name="description" content="Worldscape-MoE project website">
+  <meta name="keywords" content="Worldscape-MoE, world model, mixture of experts, video generation">
+  <title>Worldscape-MoE</title>
   <link rel="icon" type="image/jpeg" href="logo/logo.jpg">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -342,8 +342,8 @@
   <nav class="fixed top-0 left-0 right-0 z-40 glass-nav">
     <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
       <a href="#home" class="font-bold text-lg flex items-center gap-2">
-        <img src="logo/logo.jpg" alt="UniMoE-World logo" class="h-7 w-7 object-contain mix-blend-multiply" onerror="this.style.display='none'">
-        <span class="gradient-text">UniMoE-World</span>
+        <img src="logo/logo.jpg" alt="Worldscape-MoE logo" class="h-7 w-7 object-contain mix-blend-multiply" onerror="this.style.display='none'">
+        <span class="gradient-text">Worldscape-MoE</span>
       </a>
       <div class="flex items-center gap-3 md:gap-5 text-sm">
         <a href="#abstract" class="text-slate-500 hover:text-purple-700">Abstract</a>
@@ -362,7 +362,7 @@
       <div class="hero-overlay">
         <div class="max-w-7xl w-full">
           <h1 class="hero-title text-6xl md:text-8xl font-bold tracking-tight">
-            <span>UniMoE-World</span>
+            <span>Worldscape-MoE</span>
           </h1>
           <p class="mt-3 text-2xl md:text-3xl font-semibold text-[color:var(--p1)]">
             A Unified Mixture-of-Experts Architecture for Scalable Multi-Control Video Generation World Modeling
@@ -383,7 +383,7 @@
     <section id="abstract" class="section">
       <h2 class="section-heading text-4xl font-bold text-center mb-7">Abstract</h2>
       <p class="max-w-5xl mx-auto text-justify leading-relaxed text-slate-600">
-        With the rapid progress of interactive video generation, video generation world models have gradually emerged as one of the mainstream paradigms in world model research and are increasingly regarded as a promising path toward efficient intelligent agents. However, existing video generation world models are typically developed under different forms of control supervision and mainly focus either on interactive world modeling or embodied world modeling, leaving the compatibility of heterogeneous control signals largely unexplored. In this work, we introduce <strong>UniMoE-World</strong>, the first training framework that enables unified learning of world models under heterogeneous supervisory controls by incorporating a Mixture-of-Experts design into Diffusion Transformers. We further propose <strong>UniMoE-World Tuning</strong>, a continually extensible heterogeneous training strategy for world models, which supports diverse control signals, including robotic arms, hand joints, and camera poses, within a single world model and allows the model to be progressively expanded to new control settings. By enabling joint learning from more diverse data sources, this training strategy alleviates the scaling bottleneck of current world models. Our experiments show that world models trained with MoE over heterogeneous supervision consistently outperform those trained with any single control modality alone, demonstrating clear mutual gains across different control types. UniMoE-World achieves state-of-the-art performance on the WorldArena benchmark and shows particularly strong advantages in both locomotion and hand-motion capabilities over existing methods.
+        With the rapid progress of interactive video generation, video generation world models have gradually emerged as one of the mainstream paradigms in world model research and are increasingly regarded as a promising path toward efficient intelligent agents. However, existing video generation world models are typically developed under different forms of control supervision and mainly focus either on interactive world modeling or embodied world modeling, leaving the compatibility of heterogeneous control signals largely unexplored. In this work, we introduce <strong>Worldscape-MoE</strong>, the first training framework that enables unified learning of world models under heterogeneous supervisory controls by incorporating a Mixture-of-Experts design into Diffusion Transformers. We further propose <strong>Worldscape-MoE Tuning</strong>, a continually extensible heterogeneous training strategy for world models, which supports diverse control signals, including robotic arms, hand joints, and camera poses, within a single world model and allows the model to be progressively expanded to new control settings. By enabling joint learning from more diverse data sources, this training strategy alleviates the scaling bottleneck of current world models. Our experiments show that world models trained with MoE over heterogeneous supervision consistently outperform those trained with any single control modality alone, demonstrating clear mutual gains across different control types. Worldscape-MoE achieves state-of-the-art performance on the WorldArena benchmark and shows particularly strong advantages in both locomotion and hand-motion capabilities over existing methods.
       </p>
     </section>
 
@@ -392,15 +392,15 @@
       <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 text-slate-600">
         <div>
           <p class="text-xl font-bold mb-2 text-[color:var(--p1)]">01</p>
-          <p>We propose UniMoE-World, the first world model framework that supports heterogeneous action-control injection within a unified architecture, enabling training on all available ego-centric world-modeling data and alleviating scaling bottlenecks caused by single-modality supervision.</p>
+          <p>We propose Worldscape-MoE, the first world model framework that supports heterogeneous action-control injection within a unified architecture, enabling training on all available ego-centric world-modeling data and alleviating scaling bottlenecks caused by single-modality supervision.</p>
         </div>
         <div>
           <p class="text-xl font-bold mb-2 text-[color:var(--p1)]">02</p>
-          <p>We present UniMoE-World Tuning, a scalable training strategy that supports continual integration of additional control modalities while allowing the shared expert to continually absorb world knowledge across all controls.</p>
+          <p>We present Worldscape-MoE Tuning, a scalable training strategy that supports continual integration of additional control modalities while allowing the shared expert to continually absorb world knowledge across all controls.</p>
         </div>
         <div>
           <p class="text-xl font-bold mb-2 text-[color:var(--p1)]">03</p>
-          <p>Extensive experiments show clear positive transfer across different modalities in UniMoE-World, with each single-modality inference setting outperforming strong baselines.</p>
+          <p>Extensive experiments show clear positive transfer across different modalities in Worldscape-MoE, with each single-modality inference setting outperforming strong baselines.</p>
         </div>
       </div>
     </section>
@@ -408,9 +408,9 @@
     <section id="overview" class="section">
       <h2 class="section-heading text-4xl font-bold text-center mb-6">Overview</h2>
       <div class="max-w-6xl mx-auto">
-        <img class="figure-img" src="pic/overview.jpg" alt="UniMoE-World Overview Figure">
+        <img class="figure-img" src="pic/overview.jpg" alt="Worldscape-MoE Overview Figure">
         <p class="caption">
-          <strong>Figure 1: UniMoE-World Overview.</strong> UniMoE-World supports three mainstream control modalities: Locomotion for trajectory-conditioned world navigation, Manipulation for robot-action-conditioned embodied tasks, and Action Map for hand-joint-conditioned egocentric interaction generation. The framework can also be extended to additional control injection settings.
+          <strong>Figure 1: Worldscape-MoE Overview.</strong> Worldscape-MoE supports three mainstream control modalities: Locomotion for trajectory-conditioned world navigation, Manipulation for robot-action-conditioned embodied tasks, and Action Map for hand-joint-conditioned egocentric interaction generation. The framework can also be extended to additional control injection settings.
         </p>
       </div>
     </section>
@@ -419,13 +419,13 @@
       <h2 class="section-heading text-4xl font-bold text-center mb-6">Method</h2>
       <div class="max-w-6xl mx-auto">
         <p class="max-w-4xl mx-auto text-center text-slate-600 mb-6 leading-relaxed">
-          UniMoE-World unifies heterogeneous control signals in one diffusion-transformer world model by using a control-aware Mixture-of-Experts design.
+          Worldscape-MoE unifies heterogeneous control signals in one diffusion-transformer world model by using a control-aware Mixture-of-Experts design.
           During training, each sample is routed through a shared expert plus the corresponding modality expert, enabling cross-modality world knowledge sharing and control-specific specialization at the same time.
         </p>
         <div>
-          <img class="figure-img" src="pic/Main Structure.jpg" alt="UniMoE-World Architecture Figure">
+          <img class="figure-img" src="pic/Main Structure.jpg" alt="Worldscape-MoE Architecture Figure">
           <p class="caption">
-            <strong>Figure 2: UniMoE-World Architecture.</strong> Given the current world observation and different forms of supervisory control, our framework generates world dynamics under heterogeneous control signals. It supports both egocentric world exploration and embodied task execution.
+            <strong>Figure 2: Worldscape-MoE Architecture.</strong> Given the current world observation and different forms of supervisory control, our framework generates world dynamics under heterogeneous control signals. It supports both egocentric world exploration and embodied task execution.
           </p>
         </div>
       </div>
@@ -459,7 +459,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="ours-row"><td>UniMoE-World</td><td class="ours-best-cell">0.7556</td><td class="ours-best-cell">0.6955</td><td>0.7758</td><td class="ours-best-cell">0.7639</td><td>0.6745</td><td class="ours-best-cell">0.9941</td><td>0.6300</td></tr>
+                <tr class="ours-row"><td>Worldscape-MoE</td><td class="ours-best-cell">0.7556</td><td class="ours-best-cell">0.6955</td><td>0.7758</td><td class="ours-best-cell">0.7639</td><td>0.6745</td><td class="ours-best-cell">0.9941</td><td>0.6300</td></tr>
                 <tr><td>Matrix-game 3.0</td><td>0.6232</td><td>0.5633</td><td>0.6180</td><td>0.6353</td><td>0.3852</td><td>0.9660</td><td>0.5714</td></tr>
                 <tr><td>HY-World 1.5</td><td>0.7322</td><td class="best-cell">0.7128</td><td>0.7027</td><td>0.7477</td><td>0.5545</td><td>0.9908</td><td>0.6844</td></tr>
                 <tr><td>CameraCtrl</td><td>0.5521</td><td>0.4602</td><td>0.4812</td><td>0.3076</td><td>0.4833</td><td>0.9832</td><td>0.5970</td></tr>
@@ -481,7 +481,7 @@
               <table class="data-table">
                 <thead><tr><th>Model</th><th>EWM Score</th></tr></thead>
                 <tbody>
-                  <tr class="ours-row"><td>UniMoE-World</td><td class="ours-best-cell">62.84</td></tr>
+                  <tr class="ours-row"><td>Worldscape-MoE</td><td class="ours-best-cell">62.84</td></tr>
                   <tr><td>CtrlWorld</td><td>59.98</td></tr>
                   <tr><td>Wan 2.6</td><td>59.80</td></tr>
                   <tr><td>CogvideoX</td><td>58.79</td></tr>
@@ -504,7 +504,7 @@
               <table class="data-table">
                 <thead><tr><th>Model</th><th>FID-VID</th><th>FVD</th><th>FID</th></tr></thead>
                 <tbody>
-                  <tr class="ours-row"><td>UniMoE-World</td><td class="ours-best-cell">3.80</td><td class="ours-best-cell">126.27</td><td class="ours-best-cell">24.20</td></tr>
+                  <tr class="ours-row"><td>Worldscape-MoE</td><td class="ours-best-cell">3.80</td><td class="ours-best-cell">126.27</td><td class="ours-best-cell">24.20</td></tr>
                   <tr><td>HunyuanVideo-1.5</td><td>23.18</td><td>517.42</td><td>56.31</td></tr>
                   <tr><td>Cosmos-Predict 2.5</td><td>15.02</td><td>628.96</td><td>51.36</td></tr>
                   <tr><td>MimicMotion</td><td>26.74</td><td>589.47</td><td>48.92</td></tr>
@@ -524,7 +524,7 @@
                 <tr><th>Model</th><th>Image</th><th>Aesthetic</th><th>JEPA</th><th>Dynamic</th><th>Flow</th><th>Smoothness</th><th>Subject</th><th>Background</th><th>Photometric</th></tr>
               </thead>
               <tbody>
-                <tr class="ours-row"><td>UniMoE-World</td><td>0.4566</td><td>0.3795</td><td>0.8920</td><td>0.4373</td><td>0.2632</td><td>0.7717</td><td>0.8333</td><td class="ours-best-cell">0.9043</td><td>0.1439</td></tr>
+                <tr class="ours-row"><td>Worldscape-MoE</td><td>0.4566</td><td>0.3795</td><td>0.8920</td><td>0.4373</td><td>0.2632</td><td>0.7717</td><td>0.8333</td><td class="ours-best-cell">0.9043</td><td>0.1439</td></tr>
                 <tr><td>GigaWorld-0</td><td>0.5041</td><td>0.3991</td><td>0.4413</td><td>0.6709</td><td>0.3118</td><td>0.7811</td><td>0.7303</td><td>0.8563</td><td>0.1756</td></tr>
                 <tr><td>TesserAct</td><td>0.3322</td><td>0.4590</td><td>0.4579</td><td>0.5150</td><td>0.2447</td><td>0.7579</td><td>0.8250</td><td class="best-cell">0.9238</td><td>0.2491</td></tr>
                 <tr><td>RoboMaster</td><td>0.3487</td><td>0.3842</td><td>0.2966</td><td>0.6124</td><td>0.1484</td><td>0.6940</td><td>0.8295</td><td class="best-cell">0.9123</td><td>0.3356</td></tr>
@@ -550,7 +550,7 @@
                 <tr><th>Model</th><th>Interaction</th><th>Trajectory</th><th>Depth</th><th>Perspectivity</th><th>Instruction</th><th>Semantic</th><th>Action</th></tr>
               </thead>
               <tbody>
-                <tr class="ours-row"><td>UniMoE-World</td><td class="ours-best-cell">0.8008</td><td>0.4610</td><td>0.9030</td><td class="ours-best-cell">0.9686</td><td class="ours-best-cell">0.9348</td><td class="ours-best-cell">0.9039</td><td>0.0955</td></tr>
+                <tr class="ours-row"><td>Worldscape-MoE</td><td class="ours-best-cell">0.8008</td><td>0.4610</td><td>0.9030</td><td class="ours-best-cell">0.9686</td><td class="ours-best-cell">0.9348</td><td class="ours-best-cell">0.9039</td><td>0.0955</td></tr>
                 <tr><td>GigaWorld-0</td><td>0.5368</td><td>0.1552</td><td>0.6316</td><td>0.7596</td><td>0.6156</td><td>0.8591</td><td>0.1134</td></tr>
                 <tr><td>TesserAct</td><td>0.5800</td><td>0.1396</td><td>0.7159</td><td>0.7920</td><td>0.6152</td><td>0.8783</td><td>0.0311</td></tr>
                 <tr><td>RoboMaster</td><td>0.5364</td><td>0.1158</td><td>0.8335</td><td>0.7588</td><td>0.5772</td><td>0.8761</td><td>0.0352</td></tr>
@@ -572,8 +572,8 @@
 
     <section class="citation-block">
       <h2 class="section-heading text-2xl font-bold mb-3">Citation</h2>
-      <pre class="mono text-sm p-4 rounded-xl overflow-x-auto bg-slate-950 text-slate-100">@article{unimoe_world_2026,
-  title   = {UniMoE-World: A Unified Mixture-of-Experts Architecture for Scalable Multi-Control Video Generation World Modeling},
+      <pre class="mono text-sm p-4 rounded-xl overflow-x-auto bg-slate-950 text-slate-100">@article{worldscape_moe_2026,
+  title   = {Worldscape-MoE: A Unified Mixture-of-Experts Architecture for Scalable Multi-Control Video Generation World Modeling},
   author  = {Worldscape Team},
   journal = {Under Review},
   year    = {2026}
@@ -719,7 +719,7 @@
         title: "Case 1",
         casePrompt: "",
         items: [
-          { title: "UniMoE-World", video: "video/locomotion_compare/1/our/7bba3bb371d731e1_batch002_1_0_1.mp4" },
+          { title: "Worldscape-MoE", video: "video/locomotion_compare/1/our/7bba3bb371d731e1_batch002_1_0_1.mp4" },
           { title: "MatrixGame", video: "video/locomotion_compare/1/matrixgame/7bba3bb371d731e1_batch002_1_0_1.mp4" },
           { title: "ASTRA", video: "video/locomotion_compare/1/astra/7bba3bb371d731e1_batch002_1_0_1.mp4" },
           { title: "RealCam-I2V", video: "video/locomotion_compare/1/realcami2v/7bba3bb371d731e1_batch002_1_0_1.mp4" }
@@ -729,7 +729,7 @@
         title: "Case 2",
         casePrompt: "",
         items: [
-          { title: "UniMoE-World", video: "video/locomotion_compare/2/our/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
+          { title: "Worldscape-MoE", video: "video/locomotion_compare/2/our/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
           { title: "MatrixGame", video: "video/locomotion_compare/2/m,game/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
           { title: "CamI2V", video: "video/locomotion_compare/2/cami2v/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
           { title: "VideoX", video: "video/locomotion_compare/2/videox/0dd90b85c14d14dc_batch001_1_0_2.mp4" }
@@ -741,7 +741,7 @@
         title: "Case 1",
         casePrompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.",
         items: [
-          { title: "UniMoE-World", video: "video/handmotion_compare/ours/1.mp4" },
+          { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/1.mp4" },
           { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/1.mp4" },
           { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/1.mp4" }
         ]
@@ -750,7 +750,7 @@
         title: "Case 2",
         casePrompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.",
         items: [
-          { title: "UniMoE-World", video: "video/handmotion_compare/ours/2.mp4" },
+          { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/2.mp4" },
           { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/2.mp4" },
           { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/2.mp4" }
         ]
@@ -759,7 +759,7 @@
         title: "Case 3",
         casePrompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.",
         items: [
-          { title: "UniMoE-World", video: "video/handmotion_compare/ours/5.mp4" },
+          { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/5.mp4" },
           { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/5.mp4" },
           { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/5.mp4" }
         ]
