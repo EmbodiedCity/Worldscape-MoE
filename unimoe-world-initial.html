@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="UniMoE-World project website draft">
+  <meta name="keywords" content="UniMoE-World, world model, mixture of experts, video generation">
+  <title>UniMoE-World Website Draft</title>
+  <link rel="icon" type="image/jpeg" href="logo/logo.jpg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            grotesk: ['"Space Grotesk"', "sans-serif"],
+            mono: ['"JetBrains Mono"', "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --p1: #6f2dbd;
+      --p2: #4b1d95;
+      --ours-row-bg: #f4ecff;
+      --ours-sota-bg: #7b3fd1;
+      --ours-sota-text: #ffffff;
+    }
+    html, body { scroll-behavior: smooth; }
+    body { margin: 0; font-family: "Space Grotesk", sans-serif; background: var(--bg); color: var(--text); }
+    .mono { font-family: "JetBrains Mono", monospace; }
+    .gradient-text {
+      color: var(--p1);
+    }
+    .section-heading,
+    .subsection-heading {
+      color: var(--p1);
+    }
+    .glass-nav {
+      backdrop-filter: blur(12px);
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
+      border-bottom: 1px solid var(--line);
+    }
+    .section {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 4rem 1rem;
+      border-top: 1px solid var(--line);
+    }
+    .pill {
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+    }
+    .hero-stage {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .hero-stage::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 130px;
+      pointer-events: none;
+      z-index: 15;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #ffffff 85%);
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.80));
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 1rem 2rem;
+    }
+    .hero-overlay .hero-title {
+      color: var(--p1);
+      text-shadow: 0 1px 8px rgba(255, 255, 255, 0.5);
+    }
+    .marquee-wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      padding-top: 6rem;
+      mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+    }
+    .marquee-row {
+      overflow: hidden;
+      white-space: nowrap;
+      margin-bottom: 1rem;
+    }
+    .marquee-track {
+      display: inline-flex;
+      gap: 1rem;
+      animation: scroll-ltr 80s linear infinite;
+    }
+    .marquee-row.reverse .marquee-track { animation-name: scroll-rtl; }
+    @keyframes scroll-ltr {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0%); }
+    }
+    @keyframes scroll-rtl {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .bg-card {
+      width: 260px;
+      border: 1px solid var(--line);
+      border-radius: 0.8rem;
+      overflow: hidden;
+      background: color-mix(in srgb, var(--bg) 91%, transparent);
+      opacity: .84;
+    }
+    .bg-card .video-shell {
+      height: 146px;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      display: grid;
+      place-items: center;
+      color: #cbd5e1;
+      font-size: .78rem;
+    }
+    .bg-card .video-shell video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+    .bg-card p {
+      margin: 0;
+      font-size: .74rem;
+      color: var(--muted);
+      padding: .5rem .65rem;
+      border-top: 1px solid var(--line);
+    }
+    .figure-img {
+      width: 100%;
+      max-height: 720px;
+      object-fit: contain;
+      display: block;
+      background: #fff;
+    }
+    .caption {
+      margin-top: .9rem;
+      font-size: .92rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .showcase-group {
+      margin-bottom: 2.2rem;
+    }
+    .showcase-row {
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: .8rem 0;
+      margin-top: .85rem;
+    }
+    .showcase-track {
+      display: inline-flex;
+      gap: 1rem;
+      animation: scroll-ltr 70s linear infinite;
+    }
+    .showcase-row.reverse .showcase-track {
+      animation-name: scroll-rtl;
+    }
+    .showcase-card {
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      overflow: hidden;
+      background: var(--bg);
+      cursor: default;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      width: 300px;
+      min-width: 300px;
+    }
+    .showcase-card:hover {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--p1) 55%, var(--line));
+      box-shadow: 0 18px 30px rgba(15, 23, 42, .14);
+    }
+    .showcase-card .video-shell {
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      display: grid;
+      place-items: center;
+      color: #cbd5e1;
+      font-size: .86rem;
+    }
+    .showcase-card .video-shell video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+    .showcase-placeholder {
+      border: 1px dashed color-mix(in srgb, var(--line) 85%, transparent);
+      border-radius: 0.9rem;
+      padding: 1.2rem;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--bg) 94%, transparent);
+    }
+    .compare-case {
+      margin-top: 1.1rem;
+    }
+    .compare-case-prompt {
+      margin: .35rem 0 .65rem;
+      font-size: .92rem;
+      line-height: 1.55;
+      color: var(--text);
+      max-width: 960px;
+    }
+    .compare-case-prompt--placeholder {
+      color: var(--muted);
+      font-style: italic;
+    }
+    .compare-row {
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: .8rem 0;
+      margin-top: .75rem;
+    }
+    .compare-track {
+      display: grid;
+      grid-template-columns: repeat(var(--compare-cols, 4), minmax(0, 1fr));
+      gap: 1rem;
+      width: 100%;
+    }
+    .compare-track .showcase-card {
+      width: auto;
+      min-width: 0;
+    }
+    .table-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: .7rem;
+      text-align: center;
+      color: var(--p1);
+    }
+    .table-wrap { overflow-x: auto; }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: .84rem;
+      line-height: 1.3;
+    }
+    .data-table thead th {
+      border-bottom: 2px solid var(--line);
+      padding: .52rem .48rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-align: center;
+      background: var(--bg);
+      white-space: normal;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+    .data-table tbody td {
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+      padding: .56rem .48rem;
+      text-align: center;
+      white-space: nowrap;
+      background: var(--bg);
+    }
+    .data-table tbody td:first-child,
+    .data-table thead th:first-child {
+      text-align: left;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      width: 170px;
+      min-width: 170px;
+      max-width: 170px;
+    }
+    .data-table tbody tr.ours-row td {
+      background: var(--ours-row-bg);
+      font-weight: 500;
+    }
+    .data-table tbody tr.ours-row td:first-child {
+      background: var(--ours-row-bg);
+      font-weight: 700;
+    }
+    .data-table tbody tr.ours-row td.ours-best-cell {
+      background: var(--ours-sota-bg);
+      color: var(--ours-sota-text);
+      font-weight: 800;
+    }
+    .data-table tbody td.best-cell {
+      background: var(--ours-sota-bg);
+      color: var(--ours-sota-text);
+      font-weight: 700;
+    }
+    .side-by-side {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+      align-items: center;
+    }
+    @media (min-width: 1024px) {
+      .side-by-side { grid-template-columns: 1fr 1fr; }
+    }
+    .table-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+    }
+    .citation-block {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1rem 4rem;
+      border-top: 1px solid var(--line);
+    }
+    .modal-backdrop {
+      background: rgba(2, 6, 23, .76);
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <nav class="fixed top-0 left-0 right-0 z-40 glass-nav">
+    <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+      <a href="#home" class="font-bold text-lg flex items-center gap-2">
+        <img src="logo/logo.jpg" alt="UniMoE-World logo" class="h-7 w-7 object-contain mix-blend-multiply" onerror="this.style.display='none'">
+        <span class="gradient-text">UniMoE-World</span>
+      </a>
+      <div class="flex items-center gap-3 md:gap-5 text-sm">
+        <a href="#abstract" class="text-slate-500 hover:text-purple-700">Abstract</a>
+        <a href="#contributions" class="text-slate-500 hover:text-purple-700 hidden sm:inline">Contributions</a>
+        <a href="#overview" class="text-slate-500 hover:text-purple-700 hidden sm:inline">Overview</a>
+        <a href="#method" class="text-slate-500 hover:text-purple-700 hidden sm:inline">Method</a>
+        <a href="#showcase" class="text-slate-500 hover:text-purple-700">Showcase</a>
+        <a href="#results" class="text-slate-500 hover:text-purple-700 hidden sm:inline">Quantitative</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="home">
+    <section class="hero-stage">
+      <div class="marquee-wrap" id="marquee-wrap"></div>
+      <div class="hero-overlay">
+        <div class="max-w-7xl w-full">
+          <h1 class="hero-title text-6xl md:text-8xl font-bold tracking-tight">
+            <span>UniMoE-World</span>
+          </h1>
+          <p class="mt-3 text-2xl md:text-3xl font-semibold text-[color:var(--p1)]">
+            A Unified Mixture-of-Experts Architecture for Scalable Multi-Control Video Generation World Modeling
+          </p>
+          <p class="mt-5 text-2xl md:text-3xl font-bold text-[color:var(--p1)] max-w-4xl mx-auto">
+            Worldscape Team
+          </p>
+          <div class="mt-10 grid grid-cols-1 md:grid-cols-4 gap-3 max-w-6xl mx-auto">
+            <a href="#" onclick="return false;" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">Paper (Comming Soon)</a>
+            <a href="#" onclick="return false;" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">arXiv (Comming Soon)</a>
+            <a href="#" onclick="return false;" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">GitHub (Comming Soon)</a>
+            <a href="#" onclick="return false;" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">Model (Comming Soon)</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="abstract" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-7">Abstract</h2>
+      <p class="max-w-5xl mx-auto text-justify leading-relaxed text-slate-600">
+        With the rapid progress of interactive video generation, video generation world models have gradually emerged as one of the mainstream paradigms in world model research and are increasingly regarded as a promising path toward efficient intelligent agents. However, existing video generation world models are typically developed under different forms of control supervision and mainly focus either on interactive world modeling or embodied world modeling, leaving the compatibility of heterogeneous control signals largely unexplored. In this work, we introduce <strong>UniMoE-World</strong>, the first training framework that enables unified learning of world models under heterogeneous supervisory controls by incorporating a Mixture-of-Experts design into Diffusion Transformers. We further propose <strong>UniMoE-World Tuning</strong>, a continually extensible heterogeneous training strategy for world models, which supports diverse control signals, including robotic arms, hand joints, and camera poses, within a single world model and allows the model to be progressively expanded to new control settings. By enabling joint learning from more diverse data sources, this training strategy alleviates the scaling bottleneck of current world models. Our experiments show that world models trained with MoE over heterogeneous supervision consistently outperform those trained with any single control modality alone, demonstrating clear mutual gains across different control types. UniMoE-World achieves state-of-the-art performance on the WorldArena benchmark and shows particularly strong advantages in both locomotion and hand-motion capabilities over existing methods.
+      </p>
+    </section>
+
+    <section id="contributions" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-4">Contributions</h2>
+      <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 text-slate-600">
+        <div>
+          <p class="text-xl font-bold mb-2 text-[color:var(--p1)]">01</p>
+          <p>We propose UniMoE-World, the first world model framework that supports heterogeneous action-control injection within a unified architecture, enabling training on all available ego-centric world-modeling data and alleviating scaling bottlenecks caused by single-modality supervision.</p>
+        </div>
+        <div>
+          <p class="text-xl font-bold mb-2 text-[color:var(--p1)]">02</p>
+          <p>We present UniMoE-World Tuning, a scalable training strategy that supports continual integration of additional control modalities while allowing the shared expert to continually absorb world knowledge across all controls.</p>
+        </div>
+        <div>
+          <p class="text-xl font-bold mb-2 text-[color:var(--p1)]">03</p>
+          <p>Extensive experiments show clear positive transfer across different modalities in UniMoE-World, with each single-modality inference setting outperforming strong baselines.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="overview" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-6">Overview</h2>
+      <div class="max-w-6xl mx-auto">
+        <img class="figure-img" src="pic/overview.jpg" alt="UniMoE-World Overview Figure">
+        <p class="caption">
+          <strong>Figure 1: UniMoE-World Overview.</strong> UniMoE-World supports three mainstream control modalities: Locomotion for trajectory-conditioned world navigation, Manipulation for robot-action-conditioned embodied tasks, and Action Map for hand-joint-conditioned egocentric interaction generation. The framework can also be extended to additional control injection settings.
+        </p>
+      </div>
+    </section>
+
+    <section id="method" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-6">Method</h2>
+      <div class="max-w-6xl mx-auto">
+        <p class="max-w-4xl mx-auto text-center text-slate-600 mb-6 leading-relaxed">
+          UniMoE-World unifies heterogeneous control signals in one diffusion-transformer world model by using a control-aware Mixture-of-Experts design.
+          During training, each sample is routed through a shared expert plus the corresponding modality expert, enabling cross-modality world knowledge sharing and control-specific specialization at the same time.
+        </p>
+        <div>
+          <img class="figure-img" src="pic/Main Structure.jpg" alt="UniMoE-World Architecture Figure">
+          <p class="caption">
+            <strong>Figure 2: UniMoE-World Architecture.</strong> Given the current world observation and different forms of supervisory control, our framework generates world dynamics under heterogeneous control signals. It supports both egocentric world exploration and embodied task execution.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="showcase" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-8">Video Showcase</h2>
+      <div id="showcase-groups" class="max-w-7xl mx-auto space-y-8"></div>
+    </section>
+
+    <section id="comparison" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-8">Locomotion Comparison</h2>
+      <div id="comparison-groups" class="max-w-7xl mx-auto"></div>
+    </section>
+
+    <section id="comparison-handmotion" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-8">Hand Motion Comparison</h2>
+      <div id="comparison-handmotion-groups" class="max-w-7xl mx-auto"></div>
+    </section>
+
+    <section id="results" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-8">Quantitative Results</h2>
+      <div class="max-w-7xl mx-auto space-y-10">
+        <div>
+          <p class="table-title">Locomotion Experiments</p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Method</th><th>Avg</th><th>Brightness</th><th>Color Temp</th><th>Sharpness</th><th>Motion</th><th>Smoothness</th><th>Trajectory Accuracy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="ours-row"><td>UniMoE-World</td><td class="ours-best-cell">0.7556</td><td class="ours-best-cell">0.6955</td><td>0.7758</td><td class="ours-best-cell">0.7639</td><td>0.6745</td><td class="ours-best-cell">0.9941</td><td>0.6300</td></tr>
+                <tr><td>Matrix-game 3.0</td><td>0.6232</td><td>0.5633</td><td>0.6180</td><td>0.6353</td><td>0.3852</td><td>0.9660</td><td>0.5714</td></tr>
+                <tr><td>HY-World 1.5</td><td>0.7322</td><td class="best-cell">0.7128</td><td>0.7027</td><td>0.7477</td><td>0.5545</td><td>0.9908</td><td>0.6844</td></tr>
+                <tr><td>CameraCtrl</td><td>0.5521</td><td>0.4602</td><td>0.4812</td><td>0.3076</td><td>0.4833</td><td>0.9832</td><td>0.5970</td></tr>
+                <tr><td>MotionCtrl</td><td>0.5562</td><td>0.4583</td><td>0.5296</td><td>0.2421</td><td>0.5182</td><td>0.9776</td><td>0.6115</td></tr>
+                <tr><td>CamI2V</td><td>0.6137</td><td>0.5150</td><td>0.5904</td><td>0.4513</td><td>0.5255</td><td>0.9886</td><td>0.6115</td></tr>
+                <tr><td>RealCam-I2V</td><td>0.7063</td><td>0.6530</td><td>0.5712</td><td>0.6197</td><td>0.6987</td><td>0.9901</td><td>0.7050</td></tr>
+                <tr><td>VideoX-Fun-Wan</td><td>0.7443</td><td>0.6684</td><td>0.6856</td><td>0.6640</td><td>0.6934</td><td>0.9899</td><td class="best-cell">0.7645</td></tr>
+                <tr><td>AC3D</td><td>0.7262</td><td>0.4884</td><td class="best-cell">0.7764</td><td>0.7050</td><td class="best-cell">0.7213</td><td>0.9934</td><td>0.6729</td></tr>
+                <tr><td>ASTRA</td><td>0.6072</td><td>0.5600</td><td>0.5916</td><td>0.5088</td><td>0.5625</td><td>0.9826</td><td>0.4379</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="side-by-side">
+          <div class="table-col">
+            <p class="table-title">Manipulation Experiments</p>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Model</th><th>EWM Score</th></tr></thead>
+                <tbody>
+                  <tr class="ours-row"><td>UniMoE-World</td><td class="ours-best-cell">62.84</td></tr>
+                  <tr><td>CtrlWorld</td><td>59.98</td></tr>
+                  <tr><td>Wan 2.6</td><td>59.80</td></tr>
+                  <tr><td>CogvideoX</td><td>58.79</td></tr>
+                  <tr><td>Veo 3.1</td><td>57.77</td></tr>
+                  <tr><td>IRASim</td><td>56.14</td></tr>
+                  <tr><td>TesserAct</td><td>54.62</td></tr>
+                  <tr><td>Cosmos-Predict 2.5 (action)</td><td>54.29</td></tr>
+                  <tr><td>Cosmos-Predict 2.5 (text)</td><td>53.06</td></tr>
+                  <tr><td>Vidar</td><td>51.92</td></tr>
+                  <tr><td>Wan 2.2</td><td>51.71</td></tr>
+                  <tr><td>GigaWorld-0</td><td>50.96</td></tr>
+                  <tr><td>RoboMaster</td><td>50.35</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="table-col">
+            <p class="table-title">Hand Motion Experiments</p>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Model</th><th>FID-VID</th><th>FVD</th><th>FID</th></tr></thead>
+                <tbody>
+                  <tr class="ours-row"><td>UniMoE-World</td><td class="ours-best-cell">3.80</td><td class="ours-best-cell">126.27</td><td class="ours-best-cell">24.20</td></tr>
+                  <tr><td>HunyuanVideo-1.5</td><td>23.18</td><td>517.42</td><td>56.31</td></tr>
+                  <tr><td>Cosmos-Predict 2.5</td><td>15.02</td><td>628.96</td><td>51.36</td></tr>
+                  <tr><td>MimicMotion</td><td>26.74</td><td>589.47</td><td>48.92</td></tr>
+                  <tr><td>MagicDance</td><td>65.93</td><td>1498.65</td><td>91.78</td></tr>
+                  <tr><td>LOME</td><td>144.58</td><td>1794.84</td><td>67.82</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="table-title">Visual Motion and Consistency Metrics</p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>Model</th><th>Image</th><th>Aesthetic</th><th>JEPA</th><th>Dynamic</th><th>Flow</th><th>Smoothness</th><th>Subject</th><th>Background</th><th>Photometric</th></tr>
+              </thead>
+              <tbody>
+                <tr class="ours-row"><td>UniMoE-World</td><td>0.4566</td><td>0.3795</td><td>0.8920</td><td>0.4373</td><td>0.2632</td><td>0.7717</td><td>0.8333</td><td class="ours-best-cell">0.9043</td><td>0.1439</td></tr>
+                <tr><td>GigaWorld-0</td><td>0.5041</td><td>0.3991</td><td>0.4413</td><td>0.6709</td><td>0.3118</td><td>0.7811</td><td>0.7303</td><td>0.8563</td><td>0.1756</td></tr>
+                <tr><td>TesserAct</td><td>0.3322</td><td>0.4590</td><td>0.4579</td><td>0.5150</td><td>0.2447</td><td>0.7579</td><td>0.8250</td><td class="best-cell">0.9238</td><td>0.2491</td></tr>
+                <tr><td>RoboMaster</td><td>0.3487</td><td>0.3842</td><td>0.2966</td><td>0.6124</td><td>0.1484</td><td>0.6940</td><td>0.8295</td><td class="best-cell">0.9123</td><td>0.3356</td></tr>
+                <tr><td>Vidar</td><td>0.4145</td><td>0.4068</td><td>0.5608</td><td>0.2767</td><td>0.1426</td><td>0.7973</td><td>0.7629</td><td>0.8300</td><td>0.2350</td></tr>
+                <tr><td>Cosmos-Predict 2.5 (text)</td><td>0.6668</td><td>0.4501</td><td>0.3126</td><td>0.5911</td><td>0.4302</td><td>0.7882</td><td>0.7488</td><td>0.8511</td><td>0.1383</td></tr>
+                <tr><td>Cosmos-Predict 2.5 (action)</td><td>0.4489</td><td>0.3576</td><td>0.9296</td><td>0.3994</td><td>0.0573</td><td>0.7100</td><td>0.8197</td><td>0.8894</td><td>0.3528</td></tr>
+                <tr><td>CtrlWorld</td><td>0.3522</td><td>0.3893</td><td>0.9185</td><td>0.4257</td><td>0.3449</td><td>0.7377</td><td class="best-cell">0.8411</td><td>0.9057</td><td>0.1729</td></tr>
+                <tr><td>Wan 2.2</td><td>0.3884</td><td>0.3963</td><td>0.7575</td><td>0.4349</td><td>0.1269</td><td>0.7019</td><td>0.8388</td><td>0.9042</td><td class="best-cell">0.4776</td></tr>
+                <tr><td>CogvideoX</td><td>0.3582</td><td>0.3777</td><td class="best-cell">0.9384</td><td>0.3166</td><td>0.2189</td><td>0.7391</td><td>0.8083</td><td>0.8773</td><td>0.3580</td></tr>
+                <tr><td>IRASim</td><td>0.3489</td><td>0.3623</td><td>0.9330</td><td>0.4139</td><td>0.2083</td><td>0.7052</td><td>0.8312</td><td>0.9068</td><td>0.3522</td></tr>
+                <tr><td>Veo 3.1</td><td>0.6605</td><td class="best-cell">0.4632</td><td>0.5694</td><td>0.5450</td><td>0.1396</td><td>0.6989</td><td>0.7878</td><td>0.8710</td><td>0.3247</td></tr>
+                <tr><td>Wan 2.6</td><td class="best-cell">0.6824</td><td>0.4433</td><td>0.7229</td><td class="best-cell">0.7421</td><td class="best-cell">0.4532</td><td class="best-cell">0.8539</td><td>0.7517</td><td>0.8687</td><td>0.1904</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <p class="table-title">Physics and 3D and Controllability Metrics</p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>Model</th><th>Interaction</th><th>Trajectory</th><th>Depth</th><th>Perspectivity</th><th>Instruction</th><th>Semantic</th><th>Action</th></tr>
+              </thead>
+              <tbody>
+                <tr class="ours-row"><td>UniMoE-World</td><td class="ours-best-cell">0.8008</td><td>0.4610</td><td>0.9030</td><td class="ours-best-cell">0.9686</td><td class="ours-best-cell">0.9348</td><td class="ours-best-cell">0.9039</td><td>0.0955</td></tr>
+                <tr><td>GigaWorld-0</td><td>0.5368</td><td>0.1552</td><td>0.6316</td><td>0.7596</td><td>0.6156</td><td>0.8591</td><td>0.1134</td></tr>
+                <tr><td>TesserAct</td><td>0.5800</td><td>0.1396</td><td>0.7159</td><td>0.7920</td><td>0.6152</td><td>0.8783</td><td>0.0311</td></tr>
+                <tr><td>RoboMaster</td><td>0.5364</td><td>0.1158</td><td>0.8335</td><td>0.7588</td><td>0.5772</td><td>0.8761</td><td>0.0352</td></tr>
+                <tr><td>Vidar</td><td>0.5348</td><td>0.1928</td><td>0.7872</td><td>0.7592</td><td>0.5912</td><td>0.8826</td><td>0.0819</td></tr>
+                <tr><td>Cosmos-Predict 2.5 (text)</td><td>0.3872</td><td>0.0816</td><td>0.7051</td><td>0.7964</td><td>0.2664</td><td>0.7733</td><td class="best-cell">0.1418</td></tr>
+                <tr><td>Cosmos-Predict 2.5 (action)</td><td>0.5500</td><td>0.2945</td><td>0.8862</td><td>0.7644</td><td>0.5840</td><td>0.8879</td><td>0.0133</td></tr>
+                <tr><td>CtrlWorld</td><td>0.6212</td><td class="best-cell">0.4766</td><td>0.9300</td><td>0.7960</td><td>0.7272</td><td>0.8912</td><td>0.0210</td></tr>
+                <tr><td>Wan 2.2</td><td>0.5184</td><td>0.1627</td><td>0.7768</td><td>0.7660</td><td>0.5376</td><td>0.8877</td><td>0.0512</td></tr>
+                <tr><td>CogvideoX</td><td>0.5940</td><td>0.3526</td><td>0.9097</td><td>0.7828</td><td>0.7268</td><td>0.8977</td><td>0.0076</td></tr>
+                <tr><td>IRASim</td><td>0.5656</td><td>0.3639</td><td class="best-cell">0.9312</td><td>0.7788</td><td>0.6604</td><td>0.8849</td><td>0.0526</td></tr>
+                <tr><td>Veo 3.1</td><td>0.7872</td><td>0.1231</td><td>0.7421</td><td>0.8276</td><td>0.9328</td><td>0.8607</td><td>0.0852</td></tr>
+                <tr><td>Wan 2.6</td><td>0.7280</td><td>0.1182</td><td>0.7144</td><td>0.8032</td><td>0.8536</td><td>0.8728</td><td>0.0992</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="citation-block">
+      <h2 class="section-heading text-2xl font-bold mb-3">Citation</h2>
+      <pre class="mono text-sm p-4 rounded-xl overflow-x-auto bg-slate-950 text-slate-100">@article{unimoe_world_2026,
+  title   = {UniMoE-World: A Unified Mixture-of-Experts Architecture for Scalable Multi-Control Video Generation World Modeling},
+  author  = {Worldscape Team},
+  journal = {Under Review},
+  year    = {2026}
+}</pre>
+    </section>
+  </main>
+
+    <div id="demo-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+    <div class="w-full max-w-6xl bg-white border border-slate-200 rounded-xl p-4 md:p-6">
+      <div class="flex items-start justify-between gap-3 mb-4">
+        <div>
+          <h3 id="modal-title" class="font-bold text-xl">Demo</h3>
+          <p id="modal-subtitle" class="text-xs text-slate-500 mono"></p>
+        </div>
+        <button id="close-modal" class="pill rounded-full px-3 py-1.5 text-sm">Close</button>
+      </div>
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <video id="modal-video" controls playsinline class="w-full aspect-video bg-black rounded-lg"></video>
+        </div>
+        <div class="border border-slate-200 rounded-lg p-4">
+          <p class="font-semibold mb-2">Prompt</p>
+          <p id="modal-prompt" class="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">Prompt</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const HERO_ROW_VIDEOS = [
+      [
+        { video: "video/locomotion_show/7b98c08a1cb42da7_batch002_2_3_3_camera.mp4", prompt: "locomotion_case_01" },
+        { video: "video/locomotion_show/VLNENV26_x-146.394_y1605.316_z299.995_1_0_8_camera.mp4", prompt: "locomotion_case_02" },
+        { video: "video/locomotion_show/VLNENV21_x-4.686_y11.679_z-4.292_1_0_6_camera.mp4", prompt: "locomotion_case_03" },
+        { video: "video/locomotion_show/VLNENV14_x3.135_y27.596_z-6.500_1_7_0_camera.mp4", prompt: "locomotion_case_04" },
+        { video: "video/locomotion_show/00e7f68556c9ec9a_batch001_1_3_0_camera.mp4", prompt: "locomotion_case_05" },
+        { video: "video/locomotion_show/VLNENV11_x42.391_y-152.923_z-8.000_1_3_0_camera.mp4", prompt: "locomotion_case_06" },
+        { video: "video/locomotion_show/024a79375f050210_batch001_1_0_2_camera.mp4", prompt: "locomotion_case_07" },
+        { video: "video/locomotion_show/VLNENV12_x35.971_y89.486_z-5.400_1_0_2_camera.mp4", prompt: "locomotion_case_08" }
+      ],
+      [
+        { video: "video/manipulation_show/0004_adjust_bottle_train_joint_720p_fixed_scene_task_720new_ds3_episode43.mp4", prompt: "manipulation_case_01" },
+        { video: "video/manipulation_show/0033_beat_block_hammer_train_joint_720p_wzl_ds3_episode50.mp4", prompt: "manipulation_case_02" },
+        { video: "video/manipulation_show/0054_blocks_ranking_rgb_train_joint_720p_wzl_ds3_episode0.mp4", prompt: "manipulation_case_03" },
+        { video: "video/manipulation_show/0083_click_alarmclock_train_joint_720p_fixed_scene_task_720new_ds3_episode42.mp4", prompt: "manipulation_case_04" },
+        { video: "video/manipulation_show/0182_handover_mic_train_joint_720p_fixed_scene_task_720new_ds3_episode20.mp4", prompt: "manipulation_case_05" },
+        { video: "video/manipulation_show/0012_adjust_bottle_train_joint_720p_wzl_ds3_episode10.mp4", prompt: "manipulation_case_06" },
+        { video: "video/manipulation_show/0016_adjust_bottle_train_joint_720p_wzl_ds3_episode79.mp4", prompt: "manipulation_case_07" },
+        { video: "video/manipulation_show/0009_adjust_bottle_train_joint_720p_fixed_scene_task_720new_ds3_episode66.mp4", prompt: "manipulation_case_08" }
+      ],
+      [
+        { video: "video/handmotion_show/6.mp4", prompt: "handmotion_case_06" },
+        { video: "video/handmotion_show/12.mp4", prompt: "handmotion_case_12" },
+        { video: "video/handmotion_show/15.mp4", prompt: "handmotion_case_15" },
+        { video: "video/handmotion_show/19.mp4", prompt: "handmotion_case_19" },
+        { video: "video/handmotion_show/23.mp4", prompt: "handmotion_case_23" },
+        { video: "video/handmotion_show/34.mp4", prompt: "handmotion_case_34" },
+        { video: "video/handmotion_show/42.mp4", prompt: "handmotion_case_42" },
+        { video: "video/handmotion_show/63.mp4", prompt: "handmotion_case_63" }
+      ],
+      [
+        { video: "video/locomotion_show/7af972ed1c9e4728_batch001_1_0_1_camera.mp4", prompt: "locomotion_case_09" },
+        { video: "video/locomotion_show/office_P005_group00_1_0_2_camera.mp4", prompt: "locomotion_case_10" },
+        { video: "video/locomotion_show/VLNENV16_x-907.500_y59.028_z-9.500_1_0_4_camera.mp4", prompt: "locomotion_case_11" },
+        { video: "video/locomotion_show/VLNENV3_x15.545_y13.003_z-4.300_1_0_4_camera.mp4", prompt: "locomotion_case_12" },
+        { video: "video/locomotion_show/VLNENV4_x71.827_y-57.095_z-8.400_1_0_3_camera.mp4", prompt: "locomotion_case_13" },
+        { video: "video/locomotion_compare/4/our/VLNENV23_x-9.241_y58.938_z-10.211_1_5_0_1_5_0.mp4", prompt: "locomotion_case_14" },
+        { video: "video/locomotion_compare/5/our/061_75a0c4f62041e703_batch001_camera_1_1_0.mp4", prompt: "locomotion_case_15" },
+        { video: "video/locomotion_compare/2/our/0dd90b85c14d14dc_batch001_1_0_2.mp4", prompt: "locomotion_case_16" }
+      ]
+    ];
+
+    function makeMarqueeRows() {
+      const wrap = document.getElementById("marquee-wrap");
+      for (let row = 0; row < 4; row++) {
+        const rowEl = document.createElement("div");
+        rowEl.className = `marquee-row ${row % 2 === 1 ? "reverse" : ""}`;
+        const track = document.createElement("div");
+        track.className = "marquee-track";
+        const cards = [];
+        const rowItems = HERO_ROW_VIDEOS[row] || [];
+        rowItems.forEach((item) => {
+          if (item.video) {
+            cards.push(`
+              <div class="bg-card">
+                <div class="video-shell"><video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video></div>
+                <p>${item.prompt}</p>
+              </div>
+            `);
+          } else {
+            cards.push(`
+              <div class="bg-card">
+                <div class="video-shell">Reserved</div>
+                <p>${item.prompt}</p>
+              </div>
+            `);
+          }
+        });
+        track.innerHTML = cards.join("") + cards.join("");
+        rowEl.appendChild(track);
+        wrap.appendChild(rowEl);
+      }
+    }
+
+    const SHOWCASE_GROUPS = [
+      {
+        title: "Locomotion",
+        reverse: false,
+        items: [
+          { title: "Locomotion Demo 1", prompt: "Trajectory-conditioned ego-camera motion in indoor scene.", video: "video/locomotion_show/7b98c08a1cb42da7_batch002_2_3_3_camera.mp4" },
+          { title: "Locomotion Demo 2", prompt: "Long-horizon navigation with stable temporal consistency.", video: "video/locomotion_show/VLNENV26_x-146.394_y1605.316_z299.995_1_0_8_camera.mp4" },
+          { title: "Locomotion Demo 3", prompt: "Complex environment camera control under locomotion input.", video: "video/locomotion_show/VLNENV21_x-4.686_y11.679_z-4.292_1_0_6_camera.mp4" },
+          { title: "Locomotion Demo 4", prompt: "Outdoor-like viewpoint transition with smooth dynamics.", video: "video/locomotion_show/VLNENV14_x3.135_y27.596_z-6.500_1_7_0_camera.mp4" },
+          { title: "Locomotion Demo 5", prompt: "Trajectory following with robust scene appearance retention.", video: "video/locomotion_show/00e7f68556c9ec9a_batch001_1_3_0_camera.mp4" }
+        ]
+      },
+      {
+        title: "Manipulation",
+        reverse: true,
+        items: [
+          { title: "Manipulation Demo 1", prompt: "Adjust bottle task with detailed hand-object interaction.", video: "video/manipulation_show/0004_adjust_bottle_train_joint_720p_fixed_scene_task_720new_ds3_episode43.mp4" },
+          { title: "Manipulation Demo 2", prompt: "Beat block with hammer while preserving action continuity.", video: "video/manipulation_show/0033_beat_block_hammer_train_joint_720p_wzl_ds3_episode50.mp4" },
+          { title: "Manipulation Demo 3", prompt: "Block ranking sequence under RGB condition.", video: "video/manipulation_show/0054_blocks_ranking_rgb_train_joint_720p_wzl_ds3_episode0.mp4" },
+          { title: "Manipulation Demo 4", prompt: "Click interaction task with fine-grained motion control.", video: "video/manipulation_show/0083_click_alarmclock_train_joint_720p_fixed_scene_task_720new_ds3_episode42.mp4" },
+          { title: "Manipulation Demo 5", prompt: "Handover task showing coherent object transfer behavior.", video: "video/manipulation_show/0182_handover_mic_train_joint_720p_fixed_scene_task_720new_ds3_episode20.mp4" }
+        ]
+      },
+      {
+        title: "Hand Motion",
+        reverse: false,
+        items: [
+          { title: "Hand Motion Demo 1", prompt: "A bed with a purple sheet and a pink blanket draped over the headboard, featuring several stacked bowls in shades of blue and green arranged on the bed surface.", video: "video/handmotion_show/6.mp4" },
+          { title: "Hand Motion Demo 2", prompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.", video: "video/handmotion_show/12.mp4" },
+          { title: "Hand Motion Demo 3", prompt: "A small, enclosed space with a bed covered in a dark blue sheet and a light pink fabric draped over the headboard. Two white, rectangular boxes sit on the bed, one slightly larger than the other.", video: "video/handmotion_show/15.mp4" },
+          { title: "Hand Motion Demo 4", prompt: "A yellow table with a red plastic cup, a purple grape-shaped toy, an orange triangular piece, a small transparent object, and a yellow duck-shaped toy, all positioned near a brown curtain backdrop.", video: "video/handmotion_show/34.mp4" },
+          { title: "Hand Motion Demo 5", prompt: "A plain orange shirt lies flat on a yellow floor, positioned near a corner with beige walls. A white lint roller rests on the shirt, partially covering its surface.", video: "video/handmotion_show/63.mp4" }
+        ]
+      }
+    ];
+
+    const COMPARISON_CASES = [
+      {
+        title: "Case 1",
+        casePrompt: "",
+        items: [
+          { title: "UniMoE-World", video: "video/locomotion_compare/1/our/7bba3bb371d731e1_batch002_1_0_1.mp4" },
+          { title: "MatrixGame", video: "video/locomotion_compare/1/matrixgame/7bba3bb371d731e1_batch002_1_0_1.mp4" },
+          { title: "ASTRA", video: "video/locomotion_compare/1/astra/7bba3bb371d731e1_batch002_1_0_1.mp4" },
+          { title: "RealCam-I2V", video: "video/locomotion_compare/1/realcami2v/7bba3bb371d731e1_batch002_1_0_1.mp4" }
+        ]
+      },
+      {
+        title: "Case 2",
+        casePrompt: "",
+        items: [
+          { title: "UniMoE-World", video: "video/locomotion_compare/2/our/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
+          { title: "MatrixGame", video: "video/locomotion_compare/2/m,game/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
+          { title: "CamI2V", video: "video/locomotion_compare/2/cami2v/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
+          { title: "VideoX", video: "video/locomotion_compare/2/videox/0dd90b85c14d14dc_batch001_1_0_2.mp4" }
+        ]
+      }
+    ];
+    const HANDMOTION_COMPARISON_CASES = [
+      {
+        title: "Case 1",
+        casePrompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.",
+        items: [
+          { title: "UniMoE-World", video: "video/handmotion_compare/ours/1.mp4" },
+          { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/1.mp4" },
+          { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/1.mp4" }
+        ]
+      },
+      {
+        title: "Case 2",
+        casePrompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.",
+        items: [
+          { title: "UniMoE-World", video: "video/handmotion_compare/ours/2.mp4" },
+          { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/2.mp4" },
+          { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/2.mp4" }
+        ]
+      },
+      {
+        title: "Case 3",
+        casePrompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.",
+        items: [
+          { title: "UniMoE-World", video: "video/handmotion_compare/ours/5.mp4" },
+          { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/5.mp4" },
+          { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/5.mp4" }
+        ]
+      }
+    ];
+
+    const showcaseHost = document.getElementById("showcase-groups");
+    const modal = document.getElementById("demo-modal");
+    const modalVideo = document.getElementById("modal-video");
+    const modalTitle = document.getElementById("modal-title");
+    const modalSubtitle = document.getElementById("modal-subtitle");
+    const modalPrompt = document.getElementById("modal-prompt");
+    const closeModal = document.getElementById("close-modal");
+
+    function openDemo(title, group, prompt, videoPath) {
+      modalTitle.textContent = title;
+      modalSubtitle.textContent = group;
+      if (videoPath) {
+        modalVideo.src = videoPath;
+      } else {
+        modalVideo.removeAttribute("src");
+      }
+      modalVideo.load();
+      modalPrompt.textContent = prompt;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+    function closeDemo() {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      modalVideo.pause();
+      modalVideo.removeAttribute("src");
+      modalVideo.load();
+    }
+
+    function escapeAttr(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;");
+    }
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function buildShowcase() {
+      SHOWCASE_GROUPS.forEach((group) => {
+        const sec = document.createElement("section");
+        sec.className = "showcase-group";
+        sec.innerHTML = `
+          <h3 class="subsection-heading text-2xl font-bold mb-4">${group.title}</h3>
+          <div class="showcase-row ${group.reverse ? "reverse" : ""}">
+            <div class="showcase-track"></div>
+          </div>
+        `;
+        const track = sec.querySelector(".showcase-track");
+        const cards = [];
+        group.items.forEach((item) => {
+          if (item.video) {
+            cards.push(`
+              <div class="showcase-card" data-title="${item.title}" data-group="${group.title}" data-prompt="${item.prompt}" data-video="${item.video}">
+              <div class="video-shell"><video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video></div>
+              <div class="p-4">
+                <p class="font-semibold">${item.title}</p>
+                <p class="text-sm text-slate-500 mt-1">${item.prompt}</p>
+              </div>
+              </div>
+            `);
+          } else {
+            cards.push(`
+              <div class="showcase-card">
+                <div class="showcase-placeholder">
+                  <p class="font-semibold">${item.title}</p>
+                  <p class="text-sm mt-2">${item.prompt}</p>
+                </div>
+              </div>
+            `);
+          }
+        });
+        track.innerHTML = cards.join("") + cards.join("");
+        track.querySelectorAll(".showcase-card").forEach((card) => {
+          if (!card.dataset.video) return;
+          card.addEventListener("click", () => {
+            openDemo(card.dataset.title, card.dataset.group, card.dataset.prompt, card.dataset.video);
+          });
+        });
+        showcaseHost.appendChild(sec);
+      });
+    }
+
+    function enforceAutoplay() {
+      const allVideos = document.querySelectorAll(".bg-card video, .showcase-card video, #modal-video");
+      allVideos.forEach((video) => {
+        if (video.id !== "modal-video") {
+          video.muted = true;
+          video.defaultMuted = true;
+          video.loop = true;
+          video.autoplay = true;
+        }
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(() => {});
+        }
+      });
+    }
+
+    function buildComparison(containerId, cases, options = {}) {
+      const compareHost = document.getElementById(containerId);
+      if (!compareHost) return;
+      const promptPlaceholder = options.promptPlaceholder || "Task prompt will be added.";
+      cases.forEach((group) => {
+        const sec = document.createElement("section");
+        sec.className = "compare-case";
+        const casePrompt = group.casePrompt || "";
+        const promptHtml = casePrompt
+          ? `<p class="compare-case-prompt">${escapeHtml(casePrompt)}</p>`
+          : `<p class="compare-case-prompt compare-case-prompt--placeholder">${promptPlaceholder}</p>`;
+        const modalPrompt = casePrompt || promptPlaceholder;
+        const cards = group.items.map((item) => `
+          <div class="showcase-card" data-title="${escapeAttr(item.title)}" data-group="${escapeAttr(group.title)}" data-prompt="${escapeAttr(modalPrompt)}" data-video="${escapeAttr(item.video)}">
+            <div class="video-shell"><video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video></div>
+            <div class="p-4">
+              <p class="font-semibold">${item.title}</p>
+            </div>
+          </div>
+        `).join("");
+        sec.innerHTML = `
+          <h3 class="subsection-heading text-xl font-bold mb-1">${group.title}</h3>
+          ${promptHtml}
+          <div class="compare-row">
+            <div class="compare-track" style="--compare-cols: ${group.items.length}">${cards}</div>
+          </div>
+        `;
+        sec.querySelectorAll(".showcase-card").forEach((card) => {
+          card.addEventListener("click", () => {
+            openDemo(card.dataset.title, card.dataset.group, card.dataset.prompt, card.dataset.video);
+          });
+        });
+        compareHost.appendChild(sec);
+      });
+    }
+
+    closeModal.addEventListener("click", closeDemo);
+    modal.addEventListener("click", (e) => { if (e.target === modal) closeDemo(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.classList.contains("hidden")) closeDemo();
+    });
+
+    makeMarqueeRows();
+    buildShowcase();
+    buildComparison("comparison-groups", COMPARISON_CASES);
+    buildComparison("comparison-handmotion-groups", HANDMOTION_COMPARISON_CASES);
+    enforceAutoplay();
+  </script>
+</body>
+</html>
