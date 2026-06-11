@@ -117,12 +117,14 @@
       border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
     }
     .hero-strip-overlay {
+      position: absolute;
+      inset: 0;
       width: 200%;
       height: 100%;
       background-image:
         linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 35%, rgba(255, 255, 255, 0.16) 70%, rgba(255, 255, 255, 0.06) 100%);
       backdrop-filter: blur(0.6px);
-      animation: strip-ltr 30s linear infinite;
+      animation: strip-ltr 32s linear infinite;
     }
     .hero-strip-row.reverse .hero-strip-overlay { animation-name: strip-rtl; }
     @keyframes strip-ltr {
@@ -403,7 +405,7 @@
           <div class="mt-10 grid grid-cols-1 md:grid-cols-4 gap-3 max-w-6xl mx-auto">
             <a href="#" onclick="return false;" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">Paper (Comming Soon)</a>
             <a href="#" onclick="return false;" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">arXiv (Comming Soon)</a>
-            <a href="#" onclick="return false;" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">GitHub (Comming Soon)</a>
+            <a href="https://github.com/EmbodiedCity/Worldscape-MoE.code" target="_blank" rel="noopener noreferrer" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">GitHub</a>
             <a href="#" onclick="return false;" class="w-full text-center py-3 rounded-full bg-purple-700 text-white font-semibold">Model (Comming Soon)</a>
           </div>
         </div>
@@ -464,10 +466,11 @@
     <section id="showcase" class="section">
       <h2 class="section-heading text-4xl font-bold text-center mb-8">Video Showcase</h2>
       <div id="showcase-groups" class="max-w-7xl mx-auto space-y-8"></div>
-      <div class="max-w-7xl mx-auto mt-14">
-        <h3 class="subsection-heading text-2xl font-bold mb-4">W/O MoE Comparison</h3>
-        <div id="wo-moe-groups" class="space-y-6"></div>
-      </div>
+    </section>
+
+    <section id="wo-moe-comparison" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-8">W/O MoE Comparison</h2>
+      <div id="wo-moe-groups" class="max-w-7xl mx-auto space-y-6"></div>
     </section>
 
     <section id="comparison" class="section">
@@ -478,6 +481,11 @@
     <section id="comparison-handmotion" class="section">
       <h2 class="section-heading text-4xl font-bold text-center mb-8">Hand Motion Comparison</h2>
       <div id="comparison-handmotion-groups" class="max-w-7xl mx-auto"></div>
+    </section>
+
+    <section id="physics-consistency" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-8">Physics Consistency</h2>
+      <div id="physics-consistency-groups" class="max-w-7xl mx-auto space-y-8"></div>
     </section>
 
     <section id="results" class="section">
@@ -670,11 +678,22 @@
         title: "Hand Motion",
         reverse: false,
         items: [
-          { title: "Hand Motion Demo 1", prompt: "A bed with a purple sheet and a pink blanket draped over the headboard, featuring several stacked bowls in shades of blue and green arranged on the bed surface.", video: "video/handmotion_show/with_pose_top_right_handmotion/6_with_pose_top_right.mp4" },
-          { title: "Hand Motion Demo 2", prompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.", video: "video/handmotion_show/with_pose_top_right_handmotion/12_with_pose_top_right.mp4" },
-          { title: "Hand Motion Demo 3", prompt: "A small, enclosed space with a bed covered in a dark blue sheet and a light pink fabric draped over the headboard. Two white, rectangular boxes sit on the bed, one slightly larger than the other.", video: "video/handmotion_show/with_pose_top_right_handmotion/15_with_pose_top_right.mp4" },
-          { title: "Hand Motion Demo 4", prompt: "A yellow table with a red plastic cup, a purple grape-shaped toy, an orange triangular piece, a small transparent object, and a yellow duck-shaped toy, all positioned near a brown curtain backdrop.", video: "video/handmotion_show/with_pose_top_right_handmotion/34_with_pose_top_right.mp4" },
-          { title: "Hand Motion Demo 5", prompt: "A plain orange shirt lies flat on a yellow floor, positioned near a corner with beige walls. A white lint roller rests on the shirt, partially covering its surface.", video: "video/handmotion_show/with_pose_top_right_handmotion/63_with_pose_top_right.mp4" }
+          { title: "Hand Motion Demo 1", prompt: "A bed with a purple sheet and a pink blanket draped over the headboard, featuring several stacked bowls in shades of blue and green arranged on the bed surface.", video: "video/handmotion_show/6.mp4" },
+          { title: "Hand Motion Demo 2", prompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.", video: "video/handmotion_show/12.mp4" },
+          { title: "Hand Motion Demo 3", prompt: "A small, enclosed space with a bed covered in a dark blue sheet and a light pink fabric draped over the headboard. Two white, rectangular boxes sit on the bed, one slightly larger than the other.", video: "video/handmotion_show/15.mp4" },
+          { title: "Hand Motion Demo 4", prompt: "A yellow table with a red plastic cup, a purple grape-shaped toy, an orange triangular piece, a small transparent object, and a yellow duck-shaped toy, all positioned near a brown curtain backdrop.", video: "video/handmotion_show/34.mp4" },
+          { title: "Hand Motion Demo 5", prompt: "A plain orange shirt lies flat on a yellow floor, positioned near a corner with beige walls. A white lint roller rests on the shirt, partially covering its surface.", video: "video/handmotion_show/63.mp4" }
+        ]
+      },
+      {
+        title: "Single Arm Manipulation",
+        reverse: false,
+        items: [
+          { title: "Single Arm Demo 1", prompt: "Put the wine bottle on top of the cabinet.", video: "video/manipulation_single_arm/000_put_the_wine_bottle_on_top_of_the_cabinet__episode47.mp4" },
+          { title: "Single Arm Demo 2", prompt: "Put the cream cheese in the bowl.", video: "video/manipulation_single_arm/001_put_the_cream_cheese_in_the_bowl__episode41.mp4" },
+          { title: "Single Arm Demo 3", prompt: "Put the wine bottle on top of the cabinet.", video: "video/manipulation_single_arm/002_put_the_wine_bottle_on_top_of_the_cabinet__episode42.mp4" },
+          { title: "Single Arm Demo 4", prompt: "Put the wine bottle on the rack.", video: "video/manipulation_single_arm/003_put_the_wine_bottle_on_the_rack__episode40.mp4" },
+          { title: "Single Arm Demo 5", prompt: "Put the wine bottle on the rack.", video: "video/manipulation_single_arm/004_put_the_wine_bottle_on_the_rack__episode46.mp4" }
         ]
       },
       {
@@ -688,6 +707,19 @@
           { title: "Joint Demo 5", prompt: "A realistic left hand enters the frame, reaches toward the teddy bear, closes the fingers around the soft toy, lifts it slightly, and holds it securely. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_08_left_grab_bear_stitched_with_pose.mp4" }
         ]
       },
+    ];
+    const PHYSICS_CONSISTENCY_GROUPS = [
+      {
+        title: "Physics Consistency",
+        reverse: false,
+        items: [
+          { title: "Physics Demo 1", prompt: "Physics consistency sample 1.", video: "video/Pys_cons/2432efe1b5f2034b9629ad0a83e704a2_seedance_fast.mp4" },
+          { title: "Physics Demo 2", prompt: "Physics consistency sample 2.", video: "video/Pys_cons/afbe8e839ce9ddfa185a32226299910a_seedance_fast.mp4" },
+          { title: "Physics Demo 3", prompt: "Physics consistency sample 3.", video: "video/Pys_cons/outdoor__terrestrial_landscape__018_seedance_fast.mp4" },
+          { title: "Physics Demo 4", prompt: "Physics consistency sample 4.", video: "video/Pys_cons/outdoor__verdant_landscape__053_seedance_fast.mp4" },
+          { title: "Physics Demo 5", prompt: "Physics consistency sample 5.", video: "video/Pys_cons/output.mp4" }
+        ]
+      }
     ];
     const WO_MOE_COMPARISON_ROWS = [
       {
@@ -771,6 +803,7 @@
     ];
 
     const showcaseHost = document.getElementById("showcase-groups");
+    const physicsConsistencyHost = document.getElementById("physics-consistency-groups");
     const modal = document.getElementById("demo-modal");
     const modalVideo = document.getElementById("modal-video");
     const modalTitle = document.getElementById("modal-title");
@@ -812,8 +845,8 @@
         .replace(/>/g, "&gt;");
     }
 
-    function buildShowcase() {
-      SHOWCASE_GROUPS.forEach((group) => {
+    function buildShowcase(groups = SHOWCASE_GROUPS, host = showcaseHost) {
+      groups.forEach((group) => {
         const sec = document.createElement("section");
         sec.className = "showcase-group";
         sec.innerHTML = `
@@ -849,7 +882,7 @@
             openDemo(card.dataset.title, card.dataset.group, card.dataset.prompt, card.dataset.video);
           });
         });
-        showcaseHost.appendChild(sec);
+        host.appendChild(sec);
       });
     }
 
@@ -919,6 +952,9 @@
 
     makeMarqueeRows();
     buildShowcase();
+    if (physicsConsistencyHost) {
+      buildShowcase(PHYSICS_CONSISTENCY_GROUPS, physicsConsistencyHost);
+    }
     buildComparison("wo-moe-groups", WO_MOE_COMPARISON_ROWS, { promptPlaceholder: "", showItemPrompt: false });
     buildComparison("comparison-groups", COMPARISON_CASES, { showCaseTitle: false, promptPlaceholder: "" });
     buildComparison("comparison-handmotion-groups", HANDMOTION_COMPARISON_CASES, { showCaseTitle: false, promptPlaceholder: "" });

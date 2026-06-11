@@ -1,0 +1,65 @@
+{
+  "checkpoint_path": "/manifold-obs/wzy/train/videox-fun-5B-singleffn-shared-libero-single-arm-8gpu/checkpoint-5000/diffusion_pytorch_model.safetensors",
+  "dataset_meta_path": "/ML-vePFS/protected/wzy/WorldModel/VideoX-Fun/datasets/libero_single_arm_ablation/metadata_libero_single_arm_val.json",
+  "sample_count_requested": 5,
+  "sample_seed": 20260504,
+  "total_arm_candidates": 11077,
+  "sampled_candidate_count": 5,
+  "sampled_candidate_names": [
+    "put_the_wine_bottle_on_top_of_the_cabinet__episode47",
+    "put_the_cream_cheese_in_the_bowl__episode41",
+    "put_the_wine_bottle_on_top_of_the_cabinet__episode42",
+    "put_the_wine_bottle_on_the_rack__episode40",
+    "put_the_wine_bottle_on_the_rack__episode46"
+  ],
+  "num_success": 5,
+  "num_failures": 0,
+  "successes": [
+    {
+      "index": 0,
+      "candidate_index": 0,
+      "name": "put_the_wine_bottle_on_top_of_the_cabinet__episode47",
+      "video_path": "/manifold-obs/benchmark/libero_unified_val/put the wine bottle on top of the cabinet/aloha-agilex_clean_50/aloha-agilex_clean_50/video/episode47.mp4",
+      "ann_path": "/ML-vePFS/protected/wzy/WorldModel/VideoX-Fun/datasets/libero_single_arm_ablation/annotation/val/put_the_wine_bottle_on_top_of_the_cabinet__episode47.json",
+      "start_frame": 27,
+      "output_path": "/manifold-obs/wzy/infer_results/videox_fun_singleffn_libero_latest_compare/libero_latest_ckpt5000_256_20260506_001851/shared/checkpoint-5000_libero_random5/000_put_the_wine_bottle_on_top_of_the_cabinet__episode47.mp4"
+    },
+    {
+      "index": 1,
+      "candidate_index": 1,
+      "name": "put_the_cream_cheese_in_the_bowl__episode41",
+      "video_path": "/manifold-obs/benchmark/libero_unified_val/put the cream cheese in the bowl/aloha-agilex_clean_50/aloha-agilex_clean_50/video/episode41.mp4",
+      "ann_path": "/ML-vePFS/protected/wzy/WorldModel/VideoX-Fun/datasets/libero_single_arm_ablation/annotation/val/put_the_cream_cheese_in_the_bowl__episode41.json",
+      "start_frame": 20,
+      "output_path": "/manifold-obs/wzy/infer_results/videox_fun_singleffn_libero_latest_compare/libero_latest_ckpt5000_256_20260506_001851/shared/checkpoint-5000_libero_random5/001_put_the_cream_cheese_in_the_bowl__episode41.mp4"
+    },
+    {
+      "index": 2,
+      "candidate_index": 2,
+      "name": "put_the_wine_bottle_on_top_of_the_cabinet__episode42",
+      "video_path": "/manifold-obs/benchmark/libero_unified_val/put the wine bottle on top of the cabinet/aloha-agilex_clean_50/aloha-agilex_clean_50/video/episode42.mp4",
+      "ann_path": "/ML-vePFS/protected/wzy/WorldModel/VideoX-Fun/datasets/libero_single_arm_ablation/annotation/val/put_the_wine_bottle_on_top_of_the_cabinet__episode42.json",
+      "start_frame": 36,
+      "output_path": "/manifold-obs/wzy/infer_results/videox_fun_singleffn_libero_latest_compare/libero_latest_ckpt5000_256_20260506_001851/shared/checkpoint-5000_libero_random5/002_put_the_wine_bottle_on_top_of_the_cabinet__episode42.mp4"
+    },
+    {
+      "index": 3,
+      "candidate_index": 3,
+      "name": "put_the_wine_bottle_on_the_rack__episode40",
+      "video_path": "/manifold-obs/benchmark/libero_unified_val/put the wine bottle on the rack/aloha-agilex_clean_50/aloha-agilex_clean_50/video/episode40.mp4",
+      "ann_path": "/ML-vePFS/protected/wzy/WorldModel/VideoX-Fun/datasets/libero_single_arm_ablation/annotation/val/put_the_wine_bottle_on_the_rack__episode40.json",
+      "start_frame": 152,
+      "output_path": "/manifold-obs/wzy/infer_results/videox_fun_singleffn_libero_latest_compare/libero_latest_ckpt5000_256_20260506_001851/shared/checkpoint-5000_libero_random5/003_put_the_wine_bottle_on_the_rack__episode40.mp4"
+    },
+    {
+      "index": 4,
+      "candidate_index": 4,
+      "name": "put_the_wine_bottle_on_the_rack__episode46",
+      "video_path": "/manifold-obs/benchmark/libero_unified_val/put the wine bottle on the rack/aloha-agilex_clean_50/aloha-agilex_clean_50/video/episode46.mp4",
+      "ann_path": "/ML-vePFS/protected/wzy/WorldModel/VideoX-Fun/datasets/libero_single_arm_ablation/annotation/val/put_the_wine_bottle_on_the_rack__episode46.json",
+      "start_frame": 204,
+      "output_path": "/manifold-obs/wzy/infer_results/videox_fun_singleffn_libero_latest_compare/libero_latest_ckpt5000_256_20260506_001851/shared/checkpoint-5000_libero_random5/004_put_the_wine_bottle_on_the_rack__episode46.mp4"
+    }
+  ],
+  "failures": []
+}
