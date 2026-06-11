@@ -67,6 +67,15 @@
       overflow: hidden;
       background: #ffffff;
     }
+    .hero-bg-video {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.92;
+    }
     .hero-stage::after {
       content: "";
       position: absolute;
@@ -102,17 +111,28 @@
       mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
       -webkit-mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
     }
-    .marquee-row {
+    .hero-strip-row {
       overflow: hidden;
-      white-space: nowrap;
-      margin-bottom: 1rem;
+      height: calc((100vh - 6rem) / 4);
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
     }
-    .marquee-track {
-      display: inline-flex;
-      gap: 1rem;
-      animation: scroll-ltr 80s linear infinite;
+    .hero-strip-overlay {
+      width: 200%;
+      height: 100%;
+      background-image:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 35%, rgba(255, 255, 255, 0.16) 70%, rgba(255, 255, 255, 0.06) 100%);
+      backdrop-filter: blur(0.6px);
+      animation: strip-ltr 30s linear infinite;
     }
-    .marquee-row.reverse .marquee-track { animation-name: scroll-rtl; }
+    .hero-strip-row.reverse .hero-strip-overlay { animation-name: strip-rtl; }
+    @keyframes strip-ltr {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0%); }
+    }
+    @keyframes strip-rtl {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
     @keyframes scroll-ltr {
       0% { transform: translateX(-50%); }
       100% { transform: translateX(0%); }
@@ -358,6 +378,16 @@
 
   <main id="home">
     <section class="hero-stage">
+      <video
+        id="hero-bg-video"
+        class="hero-bg-video"
+        src="video/hero_background/hero_bg_collage.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+      ></video>
       <div class="marquee-wrap" id="marquee-wrap"></div>
       <div class="hero-overlay">
         <div class="max-w-7xl w-full">
@@ -434,6 +464,10 @@
     <section id="showcase" class="section">
       <h2 class="section-heading text-4xl font-bold text-center mb-8">Video Showcase</h2>
       <div id="showcase-groups" class="max-w-7xl mx-auto space-y-8"></div>
+      <div class="max-w-7xl mx-auto mt-14">
+        <h3 class="subsection-heading text-2xl font-bold mb-4">W/O MoE Comparison</h3>
+        <div id="wo-moe-groups" class="space-y-6"></div>
+      </div>
     </section>
 
     <section id="comparison" class="section">
@@ -603,79 +637,10 @@
   </div>
 
   <script>
-    const HERO_ROW_VIDEOS = [
-      [
-        { video: "video/locomotion_show/7b98c08a1cb42da7_batch002_2_3_3_camera.mp4", prompt: "locomotion_case_01" },
-        { video: "video/locomotion_show/VLNENV26_x-146.394_y1605.316_z299.995_1_0_8_camera.mp4", prompt: "locomotion_case_02" },
-        { video: "video/locomotion_show/VLNENV21_x-4.686_y11.679_z-4.292_1_0_6_camera.mp4", prompt: "locomotion_case_03" },
-        { video: "video/locomotion_show/VLNENV14_x3.135_y27.596_z-6.500_1_7_0_camera.mp4", prompt: "locomotion_case_04" },
-        { video: "video/locomotion_show/00e7f68556c9ec9a_batch001_1_3_0_camera.mp4", prompt: "locomotion_case_05" },
-        { video: "video/locomotion_show/VLNENV11_x42.391_y-152.923_z-8.000_1_3_0_camera.mp4", prompt: "locomotion_case_06" },
-        { video: "video/locomotion_show/024a79375f050210_batch001_1_0_2_camera.mp4", prompt: "locomotion_case_07" },
-        { video: "video/locomotion_show/VLNENV12_x35.971_y89.486_z-5.400_1_0_2_camera.mp4", prompt: "locomotion_case_08" }
-      ],
-      [
-        { video: "video/manipulation_show/0004_adjust_bottle_train_joint_720p_fixed_scene_task_720new_ds3_episode43.mp4", prompt: "manipulation_case_01" },
-        { video: "video/manipulation_show/0033_beat_block_hammer_train_joint_720p_wzl_ds3_episode50.mp4", prompt: "manipulation_case_02" },
-        { video: "video/manipulation_show/0054_blocks_ranking_rgb_train_joint_720p_wzl_ds3_episode0.mp4", prompt: "manipulation_case_03" },
-        { video: "video/manipulation_show/0083_click_alarmclock_train_joint_720p_fixed_scene_task_720new_ds3_episode42.mp4", prompt: "manipulation_case_04" },
-        { video: "video/manipulation_show/0182_handover_mic_train_joint_720p_fixed_scene_task_720new_ds3_episode20.mp4", prompt: "manipulation_case_05" },
-        { video: "video/manipulation_show/0012_adjust_bottle_train_joint_720p_wzl_ds3_episode10.mp4", prompt: "manipulation_case_06" },
-        { video: "video/manipulation_show/0016_adjust_bottle_train_joint_720p_wzl_ds3_episode79.mp4", prompt: "manipulation_case_07" },
-        { video: "video/manipulation_show/0009_adjust_bottle_train_joint_720p_fixed_scene_task_720new_ds3_episode66.mp4", prompt: "manipulation_case_08" }
-      ],
-      [
-        { video: "video/handmotion_show/6.mp4", prompt: "handmotion_case_06" },
-        { video: "video/handmotion_show/12.mp4", prompt: "handmotion_case_12" },
-        { video: "video/handmotion_show/15.mp4", prompt: "handmotion_case_15" },
-        { video: "video/handmotion_show/19.mp4", prompt: "handmotion_case_19" },
-        { video: "video/handmotion_show/23.mp4", prompt: "handmotion_case_23" },
-        { video: "video/handmotion_show/34.mp4", prompt: "handmotion_case_34" },
-        { video: "video/handmotion_show/42.mp4", prompt: "handmotion_case_42" },
-        { video: "video/handmotion_show/63.mp4", prompt: "handmotion_case_63" }
-      ],
-      [
-        { video: "video/locomotion_show/7af972ed1c9e4728_batch001_1_0_1_camera.mp4", prompt: "locomotion_case_09" },
-        { video: "video/locomotion_show/office_P005_group00_1_0_2_camera.mp4", prompt: "locomotion_case_10" },
-        { video: "video/locomotion_show/VLNENV16_x-907.500_y59.028_z-9.500_1_0_4_camera.mp4", prompt: "locomotion_case_11" },
-        { video: "video/locomotion_show/VLNENV3_x15.545_y13.003_z-4.300_1_0_4_camera.mp4", prompt: "locomotion_case_12" },
-        { video: "video/locomotion_show/VLNENV4_x71.827_y-57.095_z-8.400_1_0_3_camera.mp4", prompt: "locomotion_case_13" },
-        { video: "video/locomotion_compare/4/our/VLNENV23_x-9.241_y58.938_z-10.211_1_5_0_1_5_0.mp4", prompt: "locomotion_case_14" },
-        { video: "video/locomotion_compare/5/our/061_75a0c4f62041e703_batch001_camera_1_1_0.mp4", prompt: "locomotion_case_15" },
-        { video: "video/locomotion_compare/2/our/0dd90b85c14d14dc_batch001_1_0_2.mp4", prompt: "locomotion_case_16" }
-      ]
-    ];
-
     function makeMarqueeRows() {
       const wrap = document.getElementById("marquee-wrap");
-      for (let row = 0; row < 4; row++) {
-        const rowEl = document.createElement("div");
-        rowEl.className = `marquee-row ${row % 2 === 1 ? "reverse" : ""}`;
-        const track = document.createElement("div");
-        track.className = "marquee-track";
-        const cards = [];
-        const rowItems = HERO_ROW_VIDEOS[row] || [];
-        rowItems.forEach((item) => {
-          if (item.video) {
-            cards.push(`
-              <div class="bg-card">
-                <div class="video-shell"><video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video></div>
-                <p>${item.prompt}</p>
-              </div>
-            `);
-          } else {
-            cards.push(`
-              <div class="bg-card">
-                <div class="video-shell">Reserved</div>
-                <p>${item.prompt}</p>
-              </div>
-            `);
-          }
-        });
-        track.innerHTML = cards.join("") + cards.join("");
-        rowEl.appendChild(track);
-        wrap.appendChild(rowEl);
-      }
+      if (!wrap) return;
+      wrap.innerHTML = "";
     }
 
     const SHOWCASE_GROUPS = [
@@ -705,18 +670,57 @@
         title: "Hand Motion",
         reverse: false,
         items: [
-          { title: "Hand Motion Demo 1", prompt: "A bed with a purple sheet and a pink blanket draped over the headboard, featuring several stacked bowls in shades of blue and green arranged on the bed surface.", video: "video/handmotion_show/6.mp4" },
-          { title: "Hand Motion Demo 2", prompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.", video: "video/handmotion_show/12.mp4" },
-          { title: "Hand Motion Demo 3", prompt: "A small, enclosed space with a bed covered in a dark blue sheet and a light pink fabric draped over the headboard. Two white, rectangular boxes sit on the bed, one slightly larger than the other.", video: "video/handmotion_show/15.mp4" },
-          { title: "Hand Motion Demo 4", prompt: "A yellow table with a red plastic cup, a purple grape-shaped toy, an orange triangular piece, a small transparent object, and a yellow duck-shaped toy, all positioned near a brown curtain backdrop.", video: "video/handmotion_show/34.mp4" },
-          { title: "Hand Motion Demo 5", prompt: "A plain orange shirt lies flat on a yellow floor, positioned near a corner with beige walls. A white lint roller rests on the shirt, partially covering its surface.", video: "video/handmotion_show/63.mp4" }
+          { title: "Hand Motion Demo 1", prompt: "A bed with a purple sheet and a pink blanket draped over the headboard, featuring several stacked bowls in shades of blue and green arranged on the bed surface.", video: "video/handmotion_show/with_pose_top_right_handmotion/6_with_pose_top_right.mp4" },
+          { title: "Hand Motion Demo 2", prompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.", video: "video/handmotion_show/with_pose_top_right_handmotion/12_with_pose_top_right.mp4" },
+          { title: "Hand Motion Demo 3", prompt: "A small, enclosed space with a bed covered in a dark blue sheet and a light pink fabric draped over the headboard. Two white, rectangular boxes sit on the bed, one slightly larger than the other.", video: "video/handmotion_show/with_pose_top_right_handmotion/15_with_pose_top_right.mp4" },
+          { title: "Hand Motion Demo 4", prompt: "A yellow table with a red plastic cup, a purple grape-shaped toy, an orange triangular piece, a small transparent object, and a yellow duck-shaped toy, all positioned near a brown curtain backdrop.", video: "video/handmotion_show/with_pose_top_right_handmotion/34_with_pose_top_right.mp4" },
+          { title: "Hand Motion Demo 5", prompt: "A plain orange shirt lies flat on a yellow floor, positioned near a corner with beige walls. A white lint roller rests on the shirt, partially covering its surface.", video: "video/handmotion_show/with_pose_top_right_handmotion/63_with_pose_top_right.mp4" }
+        ]
+      },
+      {
+        title: "Locomotion + Hand Motion",
+        reverse: true,
+        items: [
+          { title: "Joint Demo 1", prompt: "A realistic right hand enters the frame, reaches to the flower vase on the table, wraps the fingers around the vase body, lifts the vase slightly, and holds it steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_01_pick_pillow_stitched_with_pose.mp4" },
+          { title: "Joint Demo 2", prompt: "Both realistic human hands enter the frame and form a clear heart gesture with the thumbs and index fingers, then hold the heart pose steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_02_heart_stitched_with_pose.mp4" },
+          { title: "Joint Demo 3", prompt: "A realistic right hand enters the frame and makes a clear V-shaped ye / peace sign with the index and middle fingers raised, then holds the gesture steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_04_peace_ye_stitched_with_pose.mp4" },
+          { title: "Joint Demo 4", prompt: "Both realistic human hands enter the frame and press the palms together vertically in a prayer gesture, fingers pointing upward, then hold the pose. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_06_prayer_stitched_with_pose.mp4" },
+          { title: "Joint Demo 5", prompt: "A realistic left hand enters the frame, reaches toward the teddy bear, closes the fingers around the soft toy, lifts it slightly, and holds it securely. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_08_left_grab_bear_stitched_with_pose.mp4" }
+        ]
+      },
+    ];
+    const WO_MOE_COMPARISON_ROWS = [
+      {
+        title: "Locomotion",
+        casePrompt: "",
+        items: [
+          { title: "With MoE", prompt: "Reserved for locomotion with/without MoE comparison.", video: "" },
+          { title: "Without MoE", prompt: "Reserved for locomotion with/without MoE comparison.", video: "" }
+        ]
+      },
+      {
+        title: "Manipulation",
+        casePrompt: "",
+        items: [
+          { title: "With MoE", prompt: "Reserved for manipulation with/without MoE comparison.", video: "" },
+          { title: "Without MoE", prompt: "Reserved for manipulation with/without MoE comparison.", video: "" }
+        ]
+      },
+      {
+        title: "Hand Motion",
+        casePrompt: "",
+        items: [
+          { title: "With MoE · 1", prompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.", video: "video/handmotion_wo/with_pose/w1_with_pose_h264.mp4" },
+          { title: "Without MoE · 1", prompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.", video: "video/handmotion_wo/with_pose/wo1_with_pose_h264.mp4" },
+          { title: "With MoE · 2", prompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.", video: "video/handmotion_wo/with_pose/w2_with_pose_h264.mp4" },
+          { title: "Without MoE · 2", prompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.", video: "video/handmotion_wo/with_pose/wo2_with_pose_h264.mp4" }
         ]
       }
     ];
 
     const COMPARISON_CASES = [
       {
-        title: "Case 1",
+        title: "",
         casePrompt: "",
         items: [
           { title: "Worldscape-MoE", video: "video/locomotion_compare/1/our/7bba3bb371d731e1_batch002_1_0_1.mp4" },
@@ -726,7 +730,7 @@
         ]
       },
       {
-        title: "Case 2",
+        title: "",
         casePrompt: "",
         items: [
           { title: "Worldscape-MoE", video: "video/locomotion_compare/2/our/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
@@ -738,7 +742,7 @@
     ];
     const HANDMOTION_COMPARISON_CASES = [
       {
-        title: "Case 1",
+        title: "",
         casePrompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.",
         items: [
           { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/1.mp4" },
@@ -747,7 +751,7 @@
         ]
       },
       {
-        title: "Case 2",
+        title: "",
         casePrompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.",
         items: [
           { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/2.mp4" },
@@ -756,7 +760,7 @@
         ]
       },
       {
-        title: "Case 3",
+        title: "",
         casePrompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.",
         items: [
           { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/5.mp4" },
@@ -775,7 +779,7 @@
     const closeModal = document.getElementById("close-modal");
 
     function openDemo(title, group, prompt, videoPath) {
-      modalTitle.textContent = title;
+      modalTitle.textContent = title || "Demo";
       modalSubtitle.textContent = group;
       if (videoPath) {
         modalVideo.src = videoPath;
@@ -823,21 +827,17 @@
         group.items.forEach((item) => {
           if (item.video) {
             cards.push(`
-              <div class="showcase-card" data-title="${item.title}" data-group="${group.title}" data-prompt="${item.prompt}" data-video="${item.video}">
+              <div class="showcase-card" data-title="${group.title}" data-group="${item.title}" data-prompt="${item.prompt}" data-video="${item.video}">
               <div class="video-shell"><video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video></div>
               <div class="p-4">
-                <p class="font-semibold">${item.title}</p>
-                <p class="text-sm text-slate-500 mt-1">${item.prompt}</p>
+                <p class="text-sm text-slate-500">${item.prompt}</p>
               </div>
               </div>
             `);
           } else {
             cards.push(`
               <div class="showcase-card">
-                <div class="showcase-placeholder">
-                  <p class="font-semibold">${item.title}</p>
-                  <p class="text-sm mt-2">${item.prompt}</p>
-                </div>
+                <div class="showcase-placeholder"><p class="text-sm">${item.prompt}</p></div>
               </div>
             `);
           }
@@ -854,7 +854,7 @@
     }
 
     function enforceAutoplay() {
-      const allVideos = document.querySelectorAll(".bg-card video, .showcase-card video, #modal-video");
+      const allVideos = document.querySelectorAll("#hero-bg-video, .showcase-card video, #modal-video");
       allVideos.forEach((video) => {
         if (video.id !== "modal-video") {
           video.muted = true;
@@ -872,31 +872,37 @@
     function buildComparison(containerId, cases, options = {}) {
       const compareHost = document.getElementById(containerId);
       if (!compareHost) return;
-      const promptPlaceholder = options.promptPlaceholder || "Task prompt will be added.";
+      const promptPlaceholder = options.promptPlaceholder ?? "Task prompt will be added.";
+      const showCaseTitle = options.showCaseTitle !== false;
+      const showItemPrompt = options.showItemPrompt === true;
       cases.forEach((group) => {
         const sec = document.createElement("section");
         sec.className = "compare-case";
         const casePrompt = group.casePrompt || "";
         const promptHtml = casePrompt
           ? `<p class="compare-case-prompt">${escapeHtml(casePrompt)}</p>`
-          : `<p class="compare-case-prompt compare-case-prompt--placeholder">${promptPlaceholder}</p>`;
-        const modalPrompt = casePrompt || promptPlaceholder;
+          : (promptPlaceholder
+              ? `<p class="compare-case-prompt compare-case-prompt--placeholder">${promptPlaceholder}</p>`
+              : "");
+        const modalPrompt = casePrompt || promptPlaceholder || "";
         const cards = group.items.map((item) => `
-          <div class="showcase-card" data-title="${escapeAttr(item.title)}" data-group="${escapeAttr(group.title)}" data-prompt="${escapeAttr(modalPrompt)}" data-video="${escapeAttr(item.video)}">
-            <div class="video-shell"><video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video></div>
-            <div class="p-4">
-              <p class="font-semibold">${item.title}</p>
-            </div>
+          <div class="showcase-card" data-title="${escapeAttr(item.title)}" data-group="${escapeAttr(group.title || "")}" data-prompt="${escapeAttr(item.prompt || modalPrompt)}" data-video="${escapeAttr(item.video || "")}">
+            <div class="video-shell">${item.video ? `<video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video>` : "Reserved"}</div>
+            ${item.title || (showItemPrompt && item.prompt) ? `<div class="p-4">
+              ${item.title ? `<p class="font-semibold">${item.title}</p>` : ""}
+              ${showItemPrompt && item.prompt ? `<p class="text-sm text-slate-500 mt-1">${escapeHtml(item.prompt)}</p>` : ""}
+            </div>` : ""}
           </div>
         `).join("");
         sec.innerHTML = `
-          <h3 class="subsection-heading text-xl font-bold mb-1">${group.title}</h3>
+          ${showCaseTitle ? `<h3 class="subsection-heading text-xl font-bold mb-1">${group.title}</h3>` : ""}
           ${promptHtml}
           <div class="compare-row">
             <div class="compare-track" style="--compare-cols: ${group.items.length}">${cards}</div>
           </div>
         `;
         sec.querySelectorAll(".showcase-card").forEach((card) => {
+          if (!card.dataset.video) return;
           card.addEventListener("click", () => {
             openDemo(card.dataset.title, card.dataset.group, card.dataset.prompt, card.dataset.video);
           });
@@ -913,8 +919,9 @@
 
     makeMarqueeRows();
     buildShowcase();
-    buildComparison("comparison-groups", COMPARISON_CASES);
-    buildComparison("comparison-handmotion-groups", HANDMOTION_COMPARISON_CASES);
+    buildComparison("wo-moe-groups", WO_MOE_COMPARISON_ROWS, { promptPlaceholder: "", showItemPrompt: false });
+    buildComparison("comparison-groups", COMPARISON_CASES, { showCaseTitle: false, promptPlaceholder: "" });
+    buildComparison("comparison-handmotion-groups", HANDMOTION_COMPARISON_CASES, { showCaseTitle: false, promptPlaceholder: "" });
     enforceAutoplay();
   </script>
 </body>
