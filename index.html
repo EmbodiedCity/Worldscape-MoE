@@ -516,7 +516,7 @@
 
     <section id="teaser-video" class="section">
       <div class="teaser-embed max-w-6xl mx-auto">
-        <iframe id="teaser-youtube" class="teaser-video" title="Worldscape-MoE showcase video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe id="teaser-youtube" class="teaser-video" title="Worldscape-MoE showcase video" src="https://www.youtube.com/embed/8H3hJ3XDJFk?autoplay=1&mute=1&loop=1&playlist=8H3hJ3XDJFk&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&vq=hd1080" loading="eager" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         <div id="teaser-hd-overlay" class="teaser-hd-overlay">
           <span class="teaser-hd-label">Loading HD video...</span>
         </div>
@@ -1456,7 +1456,9 @@
       if (window.location.origin && window.location.origin !== "null") {
         params.set("origin", window.location.origin);
       }
-      teaser.src = `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+      if (!teaser.getAttribute("src")) {
+        teaser.src = `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+      }
       primeTeaserYoutube(videoId);
     }
 
@@ -1470,6 +1472,7 @@
 
     let teaserSoundUnlocked = false;
     let teaserSoundActivationPending = false;
+    let teaserPlaybackRetryTimer = 0;
     const teaserSoundActivationEvents = ["pointerdown", "pointerup", "touchend", "keydown", "click"];
     const teaserSoundBestEffortEvents = ["wheel", "scroll"];
 
@@ -1518,12 +1521,14 @@
       teaserSoundActivationPending = true;
       hideTeaserSoundPrompt();
       unbindTeaserSoundUnlock();
+      window.clearInterval(teaserPlaybackRetryTimer);
       if (!applyTeaserSound()) return;
       teaserSoundActivationPending = false;
     }
 
     function tryTeaserSoundBestEffort() {
-      unlockTeaserSound();
+      if (teaserSoundUnlocked || teaserSoundActivationPending || !getTeaserYoutubePlayer()) return;
+      applyTeaserSound();
     }
 
     function bindTeaserSoundUnlock() {
@@ -1535,6 +1540,41 @@
       });
     }
 
+    function ensureTeaserMutedPlayback(player) {
+      if (!player || teaserSoundActivationPending) return;
+      window.clearInterval(teaserPlaybackRetryTimer);
+      let attempts = 0;
+      const retryPlayback = () => {
+        try {
+          if (!teaserSoundUnlocked && typeof player.mute === "function") player.mute();
+          if (typeof player.playVideo === "function") player.playVideo();
+          attempts += 1;
+          const state = typeof player.getPlayerState === "function" ? player.getPlayerState() : null;
+          if (teaserSoundUnlocked || state === YT.PlayerState.PLAYING || attempts >= 10) {
+            window.clearInterval(teaserPlaybackRetryTimer);
+          }
+        } catch (error) {
+          window.clearInterval(teaserPlaybackRetryTimer);
+        }
+      };
+      retryPlayback();
+      teaserPlaybackRetryTimer = window.setInterval(retryPlayback, 650);
+    }
+
+    function initTeaserVisibilityPlayback() {
+      const teaserEmbed = document.querySelector(".teaser-embed");
+      if (!teaserEmbed || !("IntersectionObserver" in window)) return;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting || entry.intersectionRatio < 0.2) return;
+          if (teaserSoundUnlocked || teaserSoundActivationPending) return;
+          const player = getTeaserYoutubePlayer();
+          if (player) ensureTeaserMutedPlayback(player);
+        });
+      }, { rootMargin: "320px 0px", threshold: [0, 0.2, 0.5] });
+      observer.observe(teaserEmbed);
+    }
+
     function primeTeaserYoutube(videoId) {
       const fallbackTimer = window.setTimeout(revealTeaserYoutube, 7000);
       window.onYouTubeIframeAPIReady = () => {
@@ -1542,6 +1582,7 @@
           events: {
             onReady: (event) => {
               window.teaserYoutubePlayer = event.target;
+              revealTeaserYoutube();
               event.target.mute();
               event.target.setVolume(100);
               event.target.playVideo();
@@ -1549,6 +1590,8 @@
                 window.setTimeout(() => {
                   if (applyTeaserSound()) teaserSoundActivationPending = false;
                 }, 0);
+              } else {
+                ensureTeaserMutedPlayback(event.target);
               }
               window.setTimeout(() => {
                 try {
@@ -1567,6 +1610,12 @@
               if (event.data === YT.PlayerState.ENDED) {
                 event.target.seekTo(0, true);
                 event.target.playVideo();
+              } else if (!teaserSoundUnlocked && !teaserSoundActivationPending && (
+                event.data === YT.PlayerState.UNSTARTED ||
+                event.data === YT.PlayerState.CUED ||
+                event.data === YT.PlayerState.PAUSED
+              )) {
+                window.setTimeout(() => ensureTeaserMutedPlayback(event.target), 500);
               }
             }
           }
@@ -1740,6 +1789,7 @@
     initLazyVideos();
     bindTeaserSoundUnlock();
     configureTeaserYoutube();
+    initTeaserVisibilityPlayback();
     enforceAutoplay();
   </script>
 </body>
