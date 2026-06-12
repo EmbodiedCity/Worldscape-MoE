@@ -1106,7 +1106,7 @@
       },
       {
         title: "libero",
-        reverse: false,
+        reverse: true,
         items: [
           { title: "libero Demo 1", prompt: "Put the wine bottle on top of the cabinet.", video: "video/showcase/libero/case_01_wine_bottle_cabinet.mp4" },
           { title: "libero Demo 2", prompt: "Put the cream cheese in the bowl.", video: "video/showcase/libero/case_02_cream_cheese_bowl.mp4" },
@@ -1404,7 +1404,6 @@
       const videoId = "8H3hJ3XDJFk";
       const params = new URLSearchParams({
         autoplay: "1",
-        mute: "1",
         loop: "1",
         playlist: videoId,
         playsinline: "1",
@@ -1433,10 +1432,13 @@
         const player = new YT.Player("teaser-youtube", {
           events: {
             onReady: (event) => {
-              event.target.mute();
+              event.target.unMute();
+              event.target.setVolume(100);
               event.target.playVideo();
               window.setTimeout(() => {
                 try {
+                  event.target.unMute();
+                  event.target.setVolume(100);
                   event.target.seekTo(0, true);
                   event.target.playVideo();
                 } catch (error) {}
