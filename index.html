@@ -228,6 +228,43 @@
       font-weight: 700;
       backdrop-filter: blur(8px);
     }
+    .teaser-sound-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 1rem;
+      cursor: pointer;
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity .25s ease;
+    }
+    .teaser-sound-layer.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .teaser-sound-button {
+      border: 1px solid rgba(255, 255, 255, .46);
+      border-radius: 999px;
+      background: rgba(15, 23, 42, .74);
+      color: #fff;
+      cursor: pointer;
+      font-size: .86rem;
+      font-weight: 700;
+      padding: .62rem .95rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .28);
+      transition: background .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .teaser-sound-layer:hover .teaser-sound-button,
+    .teaser-sound-button:focus-visible {
+      background: rgba(88, 28, 135, .82);
+      border-color: rgba(255, 255, 255, .68);
+      outline: none;
+      transform: translateY(-1px);
+    }
     .caption {
       margin-top: .9rem;
       font-size: .92rem;
@@ -482,6 +519,9 @@
         <iframe id="teaser-youtube" class="teaser-video" title="Worldscape-MoE showcase video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         <div id="teaser-hd-overlay" class="teaser-hd-overlay">
           <span class="teaser-hd-label">Loading HD video...</span>
+        </div>
+        <div id="teaser-sound-layer" class="teaser-sound-layer is-hidden" aria-label="Enable teaser sound">
+          <button id="teaser-sound-button" class="teaser-sound-button" type="button">Sound on</button>
         </div>
       </div>
     </section>
@@ -1243,7 +1283,7 @@
     const HANDMOTION_COMPARISON_CASES = [
       {
         title: "",
-        casePrompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.",
+        casePrompt: "",
         items: [
           { title: "Worldscape-MoE", video: "video/comparison/hand_motion/case_01/worldscape_moe.mp4" },
           { title: "HunyuanVideo-1.5", video: "video/comparison/hand_motion/case_01/hunyuanvideo_1_5.mp4" },
@@ -1252,7 +1292,7 @@
       },
       {
         title: "",
-        casePrompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.",
+        casePrompt: "",
         items: [
           { title: "Worldscape-MoE", video: "video/comparison/hand_motion/case_02/worldscape_moe.mp4" },
           { title: "HunyuanVideo-1.5", video: "video/comparison/hand_motion/case_02/hunyuanvideo_1_5.mp4" },
@@ -1261,7 +1301,7 @@
       },
       {
         title: "",
-        casePrompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.",
+        casePrompt: "",
         items: [
           { title: "Worldscape-MoE", video: "video/comparison/hand_motion/case_03/worldscape_moe.mp4" },
           { title: "HunyuanVideo-1.5", video: "video/comparison/hand_motion/case_03/hunyuanvideo_1_5.mp4" },
@@ -1404,6 +1444,7 @@
       const videoId = "8H3hJ3XDJFk";
       const params = new URLSearchParams({
         autoplay: "1",
+        mute: "1",
         loop: "1",
         playlist: videoId,
         playsinline: "1",
@@ -1424,6 +1465,74 @@
       const overlay = document.getElementById("teaser-hd-overlay");
       if (teaser) teaser.classList.add("is-ready");
       if (overlay) overlay.classList.add("is-hidden");
+      showTeaserSoundPrompt();
+    }
+
+    let teaserSoundUnlocked = false;
+    let teaserSoundActivationPending = false;
+    const teaserSoundActivationEvents = ["pointerdown", "pointerup", "touchend", "keydown", "click"];
+    const teaserSoundBestEffortEvents = ["wheel", "scroll"];
+
+    function getTeaserYoutubePlayer() {
+      const player = window.teaserYoutubePlayer;
+      if (!player || typeof player.unMute !== "function") return null;
+      return player;
+    }
+
+    function showTeaserSoundPrompt() {
+      if (teaserSoundUnlocked || teaserSoundActivationPending || !getTeaserYoutubePlayer()) return;
+      const layer = document.getElementById("teaser-sound-layer");
+      if (layer) layer.classList.remove("is-hidden");
+    }
+
+    function hideTeaserSoundPrompt() {
+      const layer = document.getElementById("teaser-sound-layer");
+      if (layer) layer.classList.add("is-hidden");
+    }
+
+    function applyTeaserSound() {
+      const player = getTeaserYoutubePlayer();
+      if (!player) return false;
+      try {
+        player.unMute();
+        if (typeof player.setVolume === "function") player.setVolume(100);
+        if (typeof player.playVideo === "function") player.playVideo();
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function unbindTeaserSoundUnlock() {
+      teaserSoundActivationEvents.forEach((eventName) => {
+        document.removeEventListener(eventName, unlockTeaserSound, true);
+      });
+      teaserSoundBestEffortEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, tryTeaserSoundBestEffort, true);
+      });
+    }
+
+    function unlockTeaserSound() {
+      if (teaserSoundUnlocked) return;
+      teaserSoundUnlocked = true;
+      teaserSoundActivationPending = true;
+      hideTeaserSoundPrompt();
+      unbindTeaserSoundUnlock();
+      if (!applyTeaserSound()) return;
+      teaserSoundActivationPending = false;
+    }
+
+    function tryTeaserSoundBestEffort() {
+      unlockTeaserSound();
+    }
+
+    function bindTeaserSoundUnlock() {
+      teaserSoundActivationEvents.forEach((eventName) => {
+        document.addEventListener(eventName, unlockTeaserSound, { capture: true, passive: true });
+      });
+      teaserSoundBestEffortEvents.forEach((eventName) => {
+        window.addEventListener(eventName, tryTeaserSoundBestEffort, { capture: true, passive: true });
+      });
     }
 
     function primeTeaserYoutube(videoId) {
@@ -1432,15 +1541,23 @@
         const player = new YT.Player("teaser-youtube", {
           events: {
             onReady: (event) => {
-              event.target.unMute();
+              window.teaserYoutubePlayer = event.target;
+              event.target.mute();
               event.target.setVolume(100);
               event.target.playVideo();
+              if (teaserSoundActivationPending) {
+                window.setTimeout(() => {
+                  if (applyTeaserSound()) teaserSoundActivationPending = false;
+                }, 0);
+              }
               window.setTimeout(() => {
                 try {
-                  event.target.unMute();
-                  event.target.setVolume(100);
-                  event.target.seekTo(0, true);
-                  event.target.playVideo();
+                  if (!teaserSoundUnlocked) {
+                    event.target.mute();
+                    event.target.setVolume(100);
+                    event.target.seekTo(0, true);
+                    event.target.playVideo();
+                  }
                 } catch (error) {}
                 window.clearTimeout(fallbackTimer);
                 revealTeaserYoutube();
@@ -1621,6 +1738,7 @@
     buildComparison("comparison-groups", COMPARISON_CASES, { showCaseTitle: false, promptPlaceholder: "" });
     buildComparison("comparison-handmotion-groups", HANDMOTION_COMPARISON_CASES, { showCaseTitle: false, promptPlaceholder: "" });
     initLazyVideos();
+    bindTeaserSoundUnlock();
     configureTeaserYoutube();
     enforceAutoplay();
   </script>
