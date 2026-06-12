@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Worldscape-MoE project website">
   <meta name="keywords" content="Worldscape-MoE, world model, mixture of experts, video generation">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Worldscape-MoE</title>
   <link rel="icon" type="image/jpeg" href="logo/logo.jpg">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -180,6 +181,53 @@
       display: block;
       background: #fff;
     }
+    .teaser-video {
+      width: 100%;
+      height: 100%;
+      max-height: 720px;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      display: block;
+      background: #000;
+      border: 0;
+      opacity: 0;
+      transition: opacity .35s ease;
+    }
+    .teaser-video.is-ready {
+      opacity: 1;
+    }
+    .teaser-embed {
+      position: relative;
+      background: #000;
+      aspect-ratio: 16 / 9;
+      max-height: 720px;
+      overflow: hidden;
+    }
+    .teaser-hd-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, .20), rgba(15, 23, 42, .54)),
+        url("https://img.youtube.com/vi/8H3hJ3XDJFk/maxresdefault.jpg") center / cover no-repeat;
+      color: #fff;
+      opacity: 1;
+      pointer-events: none;
+      transition: opacity .35s ease;
+    }
+    .teaser-hd-overlay.is-hidden {
+      opacity: 0;
+    }
+    .teaser-hd-label {
+      padding: .62rem .9rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, .72);
+      font-size: .86rem;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+    }
     .caption {
       margin-top: .9rem;
       font-size: .92rem;
@@ -234,6 +282,16 @@
       object-fit: cover;
       display: block;
       background: #000;
+    }
+    .prompt-preview {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .modal-prompt-panel {
+      max-height: 54vh;
+      overflow-y: auto;
     }
     .showcase-placeholder {
       border: 1px dashed color-mix(in srgb, var(--line) 85%, transparent);
@@ -383,7 +441,7 @@
       <video
         id="hero-bg-video"
         class="hero-bg-video"
-        src="video/hero_background/hero_bg_collage.mp4"
+        src="video/hero/hero_background_collage.mp4"
         autoplay
         muted
         loop
@@ -417,6 +475,15 @@
       <p class="max-w-5xl mx-auto text-justify leading-relaxed text-slate-600">
         With the rapid progress of interactive video generation, video generation world models have gradually emerged as one of the mainstream paradigms in world model research and are increasingly regarded as a promising path toward efficient intelligent agents. However, existing video generation world models are typically developed under different forms of control supervision and mainly focus either on interactive world modeling or embodied world modeling, leaving the compatibility of heterogeneous control signals largely unexplored. In this work, we introduce <strong>Worldscape-MoE</strong>, the first training framework that enables unified learning of world models under heterogeneous supervisory controls by incorporating a Mixture-of-Experts design into Diffusion Transformers. We further propose <strong>Worldscape-MoE Tuning</strong>, a continually extensible heterogeneous training strategy for world models, which supports diverse control signals, including robotic arms, hand joints, and camera poses, within a single world model and allows the model to be progressively expanded to new control settings. By enabling joint learning from more diverse data sources, this training strategy alleviates the scaling bottleneck of current world models. Our experiments show that world models trained with MoE over heterogeneous supervision consistently outperform those trained with any single control modality alone, demonstrating clear mutual gains across different control types. Worldscape-MoE achieves state-of-the-art performance on the WorldArena benchmark and shows particularly strong advantages in both locomotion and hand-motion capabilities over existing methods.
       </p>
+    </section>
+
+    <section id="teaser-video" class="section">
+      <div class="teaser-embed max-w-6xl mx-auto">
+        <iframe id="teaser-youtube" class="teaser-video" title="Worldscape-MoE showcase video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <div id="teaser-hd-overlay" class="teaser-hd-overlay">
+          <span class="teaser-hd-label">Loading HD video...</span>
+        </div>
+      </div>
     </section>
 
     <section id="contributions" class="section">
@@ -466,6 +533,10 @@
     <section id="showcase" class="section">
       <h2 class="section-heading text-4xl font-bold text-center mb-8">Video Showcase</h2>
       <div id="showcase-groups" class="max-w-7xl mx-auto space-y-8"></div>
+      <div class="max-w-7xl mx-auto mt-14">
+        <h3 class="section-heading text-3xl font-bold text-center mb-8">Out of Distribution</h3>
+        <div id="ood-groups" class="space-y-8"></div>
+      </div>
     </section>
 
     <section id="wo-moe-comparison" class="section">
@@ -486,6 +557,11 @@
     <section id="physics-consistency" class="section">
       <h2 class="section-heading text-4xl font-bold text-center mb-8">Physics Consistency</h2>
       <div id="physics-consistency-groups" class="max-w-7xl mx-auto space-y-8"></div>
+    </section>
+
+    <section id="loco-hand-motion-manipulation" class="section">
+      <h2 class="section-heading text-4xl font-bold text-center mb-8">Loco-Hand Motion/Manipulation</h2>
+      <div id="loco-hand-motion-manipulation-groups" class="max-w-7xl mx-auto space-y-8"></div>
     </section>
 
     <section id="results" class="section">
@@ -636,9 +712,15 @@
         <div>
           <video id="modal-video" controls playsinline class="w-full aspect-video bg-black rounded-lg"></video>
         </div>
-        <div class="border border-slate-200 rounded-lg p-4">
-          <p class="font-semibold mb-2">Prompt</p>
-          <p id="modal-prompt" class="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">Prompt</p>
+        <div class="border border-slate-200 rounded-lg p-4 modal-prompt-panel">
+          <div>
+            <p class="font-semibold mb-2">English Prompt</p>
+            <p id="modal-prompt-en" class="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">Prompt</p>
+          </div>
+          <div class="mt-5 pt-4 border-t border-slate-200">
+            <p class="font-semibold mb-2">中文 Prompt</p>
+            <p id="modal-prompt-zh" class="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">提示词</p>
+          </div>
         </div>
       </div>
     </div>
@@ -651,73 +733,455 @@
       wrap.innerHTML = "";
     }
 
+
+    const VIDEO_PROMPT_MAP = {
+      "video/ablation/hand_motion/case_01/with_moe.mp4": {
+            "en": "The setting features a purple sheet surface with a pink backdrop and white wall. An open coloring book shows a rocket ship drawing in the foreground. Behind it rests an open box of 64 Crayola crayons containing many colored sticks. Grey sweater sleeves are visible on both arms. The left hand picks up a lime green crayon. The right hand grasps another green crayon from the page. The right hand lifts this crayon and inserts it into the cardboard box. Finally, the right hand returns to rest near the book while the left hand maintains its grip on the green crayon.",
+            "zh": "场景布置为紫色布面，配以粉色背景和白墙。前景中有一本打开的涂色书，上面画着一艘火箭。书后放着一盒打开的 64 色绘儿乐蜡笔，盒内装有许多彩色蜡笔。双臂可见灰色毛衣袖口。左手拿起一支青柠绿色的蜡笔。右手从书页上抓起另一支绿色蜡笔。右手抬起这支蜡笔并将其放入纸盒中。最后，右手回到书旁静止，左手则继续握着那支绿色蜡笔。"
+      },
+      "video/ablation/hand_motion/case_01/without_moe.mp4": {
+            "en": "The setting features a purple sheet surface with a pink backdrop and white wall. An open coloring book shows a rocket ship drawing in the foreground. Behind it rests an open box of 64 Crayola crayons containing many colored sticks. Grey sweater sleeves are visible on both arms. The left hand picks up a lime green crayon. The right hand grasps another green crayon from the page. The right hand lifts this crayon and inserts it into the cardboard box. Finally, the right hand returns to rest near the book while the left hand maintains its grip on the green crayon.",
+            "zh": "场景布置为紫色布面，配以粉色背景和白墙。前景中有一本打开的涂色书，上面画着一艘火箭。书后放着一盒打开的 64 色绘儿乐蜡笔，盒内装有许多彩色蜡笔。双臂可见灰色毛衣袖口。左手拿起一支青柠绿色的蜡笔。右手从书页上抓起另一支绿色蜡笔。右手抬起这支蜡笔并将其放入纸盒中。最后，右手回到书旁静止，左手则继续握着那支绿色蜡笔。"
+      },
+      "video/ablation/hand_motion/case_02/with_moe.mp4": {
+            "en": "This bright, modern kitchen has white cabinetry and countertops. A central island with a light wood base features white upholstered bar stools and three rectangular pendant lights above. In the background, a stainless steel gas stovetop sits against a white tiled backsplash. A white ceramic pitcher rests on the left counter, while a sink with a curved faucet is visible on the right. Initially, the view is static until hands enter from the bottom. They raise towards the center and fingers curve inward to form a heart shape. The person holds this gesture steady, framing the gas stovetop through the opening. The hands remain in this position, maintaining the shape without manipulating objects.",
+            "zh": "这间明亮现代的厨房配有白色橱柜和台面。中央岛台底座为浅色木质，配有白色软包吧台凳，上方悬挂着三盏矩形吊灯。背景中，不锈钢燃气灶安装在白色瓷砖防溅墙前。左侧台面上放置着一个白色陶瓷水壶，右侧可见一个带弧形水龙头的水槽。起初画面静止，随后双手从底部进入。双手向中心抬起，手指向内弯曲成心形。人物保持该手势稳定，透过心形开口将燃气灶框入其中。双手维持此姿势不变，未触碰任何物体。"
+      },
+      "video/ablation/hand_motion/case_02/without_moe.mp4": {
+            "en": "This bright, modern kitchen has white cabinetry and countertops. A central island with a light wood base features white upholstered bar stools and three rectangular pendant lights above. In the background, a stainless steel gas stovetop sits against a white tiled backsplash. A white ceramic pitcher rests on the left counter, while a sink with a curved faucet is visible on the right. Initially, the view is static until hands enter from the bottom. They raise towards the center and fingers curve inward to form a heart shape. The person holds this gesture steady, framing the gas stovetop through the opening. The hands remain in this position, maintaining the shape without manipulating objects.",
+            "zh": "这间明亮现代的厨房配有白色橱柜和台面。中央岛台底座为浅色木质，配有白色软包吧台凳，上方悬挂着三盏矩形吊灯。背景中，不锈钢燃气灶安装在白色瓷砖防溅墙前。左侧台面上放置着一个白色陶瓷水壶，右侧可见一个带弧形水龙头的水槽。起初画面静止，随后双手从底部进入。双手向中心抬起，手指向内弯曲成心形。人物保持该手势稳定，透过心形开口将燃气灶框入其中。双手维持此姿势不变，未触碰任何物体。"
+      },
+      "video/ablation/locomotion/case_01/with_moe.mp4": {
+            "en": "The video begins with a focus on a bed covered in a colorful swirl-patterned comforter against light blue walls, where a white letter K is mounted above the headboard. To the right, mirrored closet doors reflect light from a window and display a red poster, while a small shelf holds items above the pillows. As the video progresses, the left side of the room becomes visible, revealing a white light switch on the wall. Then, a wooden door and its white trim appear on the far left, along with a ventilation grate near the ceiling. Finally, the entire layout is visible, displaying the hardwood floor and the open space between the bed and the entrance. The bright lights and open floor make the bedroom look quiet and tidy.",
+            "zh": "视频一开始对着床，床上铺着彩色漩涡花纹的被子，背景是浅蓝色墙壁，床头上方装着一个白色的字母 K。右边是镜面衣柜门，反射着窗户的光，门上贴着一张红色海报，枕头上方的一个小架子上放着些物品。随后房间左侧显露出来，墙上有个白色的开关。最左边是一扇木门和白色的门框，天花板附近还有个通风口。最后能看到房间全貌，包括硬木地板，以及床和入口之间的空地。灯光很亮，地面空旷，卧室显得安静又整洁。"
+      },
+      "video/ablation/locomotion/case_01/without_moe.mp4": {
+            "en": "The video begins with a focus on a bed covered in a colorful swirl-patterned comforter against light blue walls, where a white letter K is mounted above the headboard. To the right, mirrored closet doors reflect light from a window and display a red poster, while a small shelf holds items above the pillows. As the video progresses, the left side of the room becomes visible, revealing a white light switch on the wall. Then, a wooden door and its white trim appear on the far left, along with a ventilation grate near the ceiling. Finally, the entire layout is visible, displaying the hardwood floor and the open space between the bed and the entrance. The bright lights and open floor make the bedroom look quiet and tidy.",
+            "zh": "视频一开始对着床，床上铺着彩色漩涡花纹的被子，背景是浅蓝色墙壁，床头上方装着一个白色的字母 K。右边是镜面衣柜门，反射着窗户的光，门上贴着一张红色海报，枕头上方的一个小架子上放着些物品。随后房间左侧显露出来，墙上有个白色的开关。最左边是一扇木门和白色的门框，天花板附近还有个通风口。最后能看到房间全貌，包括硬木地板，以及床和入口之间的空地。灯光很亮，地面空旷，卧室显得安静又整洁。"
+      },
+      "video/ablation/locomotion/case_02/with_moe.mp4": {
+            "en": "The video begins with a view of a kitchen island equipped with a black stovetop and white cabinetry, where decorative vases and a fruit basket sit on the granite countertop under warm recessed lighting. As the sequence continues, more of the open floor plan becomes visible, showing a dark wooden dining table and chairs situated on polished hardwood floors that stretch toward a living area with a fireplace in the background. Then, large glass doors on the right side appear, allowing bright natural daylight to shine across the interior and illuminate the empty chairs. Finally, the scene displays the full connection between the kitchen workspace and the sunlit doorway, showing the clean lines of the furniture and the unoccupied space. The room feels bright and quiet because the sunlight shines on the empty floor and there are no people or moving objects in the space.",
+            "zh": "视频开始时展示了一个厨房岛台，配有黑色炉灶和白色橱柜。花岗岩台面上放着装饰花瓶和水果篮，上方有温暖的嵌入式灯光。随后，可以看到更多开放式布局，一张深色木质餐桌和椅子摆在光亮的硬木地板上，地板通向背景中有壁炉的起居区。接着，右侧出现了大玻璃门，明亮的自然光透过门照进室内，照亮了空着的椅子。最后，画面展现了厨房操作区和阳光充足的门口之间的整体连接，能看到家具简洁的线条和空旷的空间。房间显得明亮安静，阳光洒在空旷的地板上，空间里没有任何人或移动的物体。"
+      },
+      "video/ablation/locomotion/case_02/without_moe.mp4": {
+            "en": "The video begins with a view of a kitchen island equipped with a black stovetop and white cabinetry, where decorative vases and a fruit basket sit on the granite countertop under warm recessed lighting. As the sequence continues, more of the open floor plan becomes visible, showing a dark wooden dining table and chairs situated on polished hardwood floors that stretch toward a living area with a fireplace in the background. Then, large glass doors on the right side appear, allowing bright natural daylight to shine across the interior and illuminate the empty chairs. Finally, the scene displays the full connection between the kitchen workspace and the sunlit doorway, showing the clean lines of the furniture and the unoccupied space. The room feels bright and quiet because the sunlight shines on the empty floor and there are no people or moving objects in the space.",
+            "zh": "视频开始时展示了一个厨房岛台，配有黑色炉灶和白色橱柜。花岗岩台面上放着装饰花瓶和水果篮，上方有温暖的嵌入式灯光。随后，可以看到更多开放式布局，一张深色木质餐桌和椅子摆在光亮的硬木地板上，地板通向背景中有壁炉的起居区。接着，右侧出现了大玻璃门，明亮的自然光透过门照进室内，照亮了空着的椅子。最后，画面展现了厨房操作区和阳光充足的门口之间的整体连接，能看到家具简洁的线条和空旷的空间。房间显得明亮安静，阳光洒在空旷的地板上，空间里没有任何人或移动的物体。"
+      },
+      "video/ablation/manipulation/case_01/with_moe.mp4": {
+            "en": "Pick up the yellow condiment container from the upper-left area and place it on the table below.",
+            "zh": "拿起左上方的黄色调味料容器，并将其放到下方的桌子上。"
+      },
+      "video/ablation/manipulation/case_01/without_moe.mp4": {
+            "en": "Pick up the yellow condiment container from the upper-left area and place it on the table below.",
+            "zh": "拿起左上方的黄色调味料容器，并将其放到下方的桌子上。"
+      },
+      "video/ablation/manipulation/case_02/with_moe.mp4": {
+            "en": "Remove the rubber lid from the table.",
+            "zh": "拿走桌子上的橡胶盖子。"
+      },
+      "video/ablation/manipulation/case_02/without_moe.mp4": {
+            "en": "Remove the rubber lid from the table.",
+            "zh": "拿走桌子上的橡胶盖子。"
+      },
+      "video/comparison/hand_motion/case_01/hunyuanvideo_1_5.mp4": {
+            "en": "On a bed covered with a light green sheet, a brown headboard and white heater are visible in the background. A pile of multicolored plastic pony beads rests centrally on the fabric. To the left sits a black rectangular object. A string of dark blue beads lies on the sheet, held by the left hand alongside a thin threading tool. The wearer threads beads onto the cord. The left hand stabilizes the thin black tool attached to the existing blue beaded string. The right hand reaches into the pile, selects a green bead, and lifts it. The fingers maneuver the bead towards the tool tip and push it onto the wire to continue the assembly.",
+            "zh": "一张铺着浅绿色床单的床上，背景中可见棕色的床头板和白色的取暖器。一堆五彩的塑料串珠放置在布料中央。左侧放着一个黑色的矩形物体。一串深蓝色珠子置于床单上，左手持握着一根细穿线工具及珠串。操作者正在将珠子穿到绳线上。左手稳住连接着已有蓝色珠串的细黑色工具。右手伸入珠堆，挑选出一颗绿色珠子并拿起。手指将珠子移向工具尖端，并将其推入线中以继续串制。"
+      },
+      "video/comparison/hand_motion/case_01/mimicmotion.mp4": {
+            "en": "On a bed covered with a light green sheet, a brown headboard and white heater are visible in the background. A pile of multicolored plastic pony beads rests centrally on the fabric. To the left sits a black rectangular object. A string of dark blue beads lies on the sheet, held by the left hand alongside a thin threading tool. The wearer threads beads onto the cord. The left hand stabilizes the thin black tool attached to the existing blue beaded string. The right hand reaches into the pile, selects a green bead, and lifts it. The fingers maneuver the bead towards the tool tip and push it onto the wire to continue the assembly.",
+            "zh": "一张铺着浅绿色床单的床上，背景中可见棕色的床头板和白色的取暖器。一堆五彩的塑料串珠放置在布料中央。左侧放着一个黑色的矩形物体。一串深蓝色珠子置于床单上，左手持握着一根细穿线工具及珠串。操作者正在将珠子穿到绳线上。左手稳住连接着已有蓝色珠串的细黑色工具。右手伸入珠堆，挑选出一颗绿色珠子并拿起。手指将珠子移向工具尖端，并将其推入线中以继续串制。"
+      },
+      "video/comparison/hand_motion/case_01/worldscape_moe.mp4": {
+            "en": "On a bed covered with a light green sheet, a brown headboard and white heater are visible in the background. A pile of multicolored plastic pony beads rests centrally on the fabric. To the left sits a black rectangular object. A string of dark blue beads lies on the sheet, held by the left hand alongside a thin threading tool. The wearer threads beads onto the cord. The left hand stabilizes the thin black tool attached to the existing blue beaded string. The right hand reaches into the pile, selects a green bead, and lifts it. The fingers maneuver the bead towards the tool tip and push it onto the wire to continue the assembly.",
+            "zh": "一张铺着浅绿色床单的床上，背景中可见棕色的床头板和白色的取暖器。一堆五彩的塑料串珠放置在布料中央。左侧放着一个黑色的矩形物体。一串深蓝色珠子置于床单上，左手持握着一根细穿线工具及珠串。操作者正在将珠子穿到绳线上。左手稳住连接着已有蓝色珠串的细黑色工具。右手伸入珠堆，挑选出一颗绿色珠子并拿起。手指将珠子移向工具尖端，并将其推入线中以继续串制。"
+      },
+      "video/comparison/hand_motion/case_02/hunyuanvideo_1_5.mp4": {
+            "en": "The scene features a flat surface covered in a smooth yellow cloth within a corner formed by beige walls and a brown fabric backdrop. Several small white dice are scattered loosely across the material. Warm lighting casts soft shadows around the objects and the hands, clad in dark sleeves. The wearer begins with hands open near the bottom edge before reaching out to collect the dice. The left hand curls to hold a single die securely. The right hand extends to grasp dice scattered on the surface, picking them up one by one. It moves from the right side towards the center, gathering pieces while the left hand holds its grip.",
+            "zh": "场景展示了一个平面，铺着光滑的黄布，位于米色墙壁与棕色织物背景构成的角落中。几颗小白骰子松散地散落在布面上。暖色灯光在物体和双手周围投下柔和的阴影，手臂穿着深色袖子。人物起初双手张开置于底部边缘附近，随后伸手收集骰子。左手握拳，稳稳握住一颗骰子。右手伸向散落在布面上的骰子，逐个将其拾起。右手从右侧向中心移动，收集骰子，同时左手保持握持状态。"
+      },
+      "video/comparison/hand_motion/case_02/mimicmotion.mp4": {
+            "en": "The scene features a flat surface covered in a smooth yellow cloth within a corner formed by beige walls and a brown fabric backdrop. Several small white dice are scattered loosely across the material. Warm lighting casts soft shadows around the objects and the hands, clad in dark sleeves. The wearer begins with hands open near the bottom edge before reaching out to collect the dice. The left hand curls to hold a single die securely. The right hand extends to grasp dice scattered on the surface, picking them up one by one. It moves from the right side towards the center, gathering pieces while the left hand holds its grip.",
+            "zh": "场景展示了一个平面，铺着光滑的黄布，位于米色墙壁与棕色织物背景构成的角落中。几颗小白骰子松散地散落在布面上。暖色灯光在物体和双手周围投下柔和的阴影，手臂穿着深色袖子。人物起初双手张开置于底部边缘附近，随后伸手收集骰子。左手握拳，稳稳握住一颗骰子。右手伸向散落在布面上的骰子，逐个将其拾起。右手从右侧向中心移动，收集骰子，同时左手保持握持状态。"
+      },
+      "video/comparison/hand_motion/case_02/worldscape_moe.mp4": {
+            "en": "The scene features a flat surface covered in a smooth yellow cloth within a corner formed by beige walls and a brown fabric backdrop. Several small white dice are scattered loosely across the material. Warm lighting casts soft shadows around the objects and the hands, clad in dark sleeves. The wearer begins with hands open near the bottom edge before reaching out to collect the dice. The left hand curls to hold a single die securely. The right hand extends to grasp dice scattered on the surface, picking them up one by one. It moves from the right side towards the center, gathering pieces while the left hand holds its grip.",
+            "zh": "场景展示了一个平面，铺着光滑的黄布，位于米色墙壁与棕色织物背景构成的角落中。几颗小白骰子松散地散落在布面上。暖色灯光在物体和双手周围投下柔和的阴影，手臂穿着深色袖子。人物起初双手张开置于底部边缘附近，随后伸手收集骰子。左手握拳，稳稳握住一颗骰子。右手伸向散落在布面上的骰子，逐个将其拾起。右手从右侧向中心移动，收集骰子，同时左手保持握持状态。"
+      },
+      "video/comparison/hand_motion/case_03/hunyuanvideo_1_5.mp4": {
+            "en": "The scene is set on a surface covered with a light green sheet beneath a wooden frame, with a dark blue pillow resting against the wall. Centered on the fabric is a white object consisting of a square base topped with a sphere, initially obscured by a white cylindrical cup. The person wears a white knitted sweater with long sleeves. The wearer begins with hands hovering near the object. The left hand stabilizes the base while the right hand grasps the cylindrical cover. The right hand lifts the cup upwards, revealing the spherical knob underneath. Finally, the wearer holds the separated cup to the right side while keeping the left hand near the base.",
+            "zh": "场景设定在木框架下方铺有浅绿色布单的平面上，墙边靠着一个深蓝色枕头。布料中央放置着一个白色物体，由方形底座和顶部的球体组成，起初被一个白色圆柱形杯子遮盖。人物身穿白色长袖针织毛衣。开始时，双手悬停在物体附近。左手稳住底座，右手握住圆柱形杯子。随后右手将杯子向上提起，露出下方的球形旋钮。最后，人物将分离后的杯子持于右侧，同时左手保持在底座附近。"
+      },
+      "video/comparison/hand_motion/case_03/mimicmotion.mp4": {
+            "en": "The scene is set on a surface covered with a light green sheet beneath a wooden frame, with a dark blue pillow resting against the wall. Centered on the fabric is a white object consisting of a square base topped with a sphere, initially obscured by a white cylindrical cup. The person wears a white knitted sweater with long sleeves. The wearer begins with hands hovering near the object. The left hand stabilizes the base while the right hand grasps the cylindrical cover. The right hand lifts the cup upwards, revealing the spherical knob underneath. Finally, the wearer holds the separated cup to the right side while keeping the left hand near the base.",
+            "zh": "场景设定在木框架下方铺有浅绿色布单的平面上，墙边靠着一个深蓝色枕头。布料中央放置着一个白色物体，由方形底座和顶部的球体组成，起初被一个白色圆柱形杯子遮盖。人物身穿白色长袖针织毛衣。开始时，双手悬停在物体附近。左手稳住底座，右手握住圆柱形杯子。随后右手将杯子向上提起，露出下方的球形旋钮。最后，人物将分离后的杯子持于右侧，同时左手保持在底座附近。"
+      },
+      "video/comparison/hand_motion/case_03/worldscape_moe.mp4": {
+            "en": "The scene is set on a surface covered with a light green sheet beneath a wooden frame, with a dark blue pillow resting against the wall. Centered on the fabric is a white object consisting of a square base topped with a sphere, initially obscured by a white cylindrical cup. The person wears a white knitted sweater with long sleeves. The wearer begins with hands hovering near the object. The left hand stabilizes the base while the right hand grasps the cylindrical cover. The right hand lifts the cup upwards, revealing the spherical knob underneath. Finally, the wearer holds the separated cup to the right side while keeping the left hand near the base.",
+            "zh": "场景设定在木框架下方铺有浅绿色布单的平面上，墙边靠着一个深蓝色枕头。布料中央放置着一个白色物体，由方形底座和顶部的球体组成，起初被一个白色圆柱形杯子遮盖。人物身穿白色长袖针织毛衣。开始时，双手悬停在物体附近。左手稳住底座，右手握住圆柱形杯子。随后右手将杯子向上提起，露出下方的球形旋钮。最后，人物将分离后的杯子持于右侧，同时左手保持在底座附近。"
+      },
+      "video/comparison/locomotion/case_01/astra.mp4": {
+            "en": "The video begins with a view of a wooden deck bathed in bright daylight, where a patio table and chairs sit under a large beige umbrella. To the left, a dark building with a small white window is positioned next to a red hot tub cover, and a black grill cover stands near the railing. As the sequence progresses, the sunlight remains steady, lighting up the green lawn and dense trees in the background beyond the glass and wood railing. Then, the shadows on the deck planks stay sharp and fixed in place, indicating that there is no wind moving the umbrella or the nearby leaves. Finally, the bright sun and empty chairs make the deck look quiet and still.",
+            "zh": "视频一开始展示的是阳光明亮的木制露台，上面放着一张庭院桌椅，撑着一把大的米色遮阳伞。左边有一栋深色建筑，带有个小白窗，旁边挨着一个红色的热水浴缸罩，栏杆附近还立着一个黑色的烧烤架罩。阳光一直保持稳定，照亮了玻璃和木质栏杆外的绿色草坪和背景里茂密的树木。露台木板上的阴影清晰且固定不动，说明没有风，遮阳伞和附近的树叶都没有晃动。最后，明亮的阳光和空着的椅子让整个露台显得安静而静止。"
+      },
+      "video/comparison/locomotion/case_01/matrixgame.mp4": {
+            "en": "The video begins with a view of a wooden deck bathed in bright daylight, where a patio table and chairs sit under a large beige umbrella. To the left, a dark building with a small white window is positioned next to a red hot tub cover, and a black grill cover stands near the railing. As the sequence progresses, the sunlight remains steady, lighting up the green lawn and dense trees in the background beyond the glass and wood railing. Then, the shadows on the deck planks stay sharp and fixed in place, indicating that there is no wind moving the umbrella or the nearby leaves. Finally, the bright sun and empty chairs make the deck look quiet and still.",
+            "zh": "视频一开始展示的是阳光明亮的木制露台，上面放着一张庭院桌椅，撑着一把大的米色遮阳伞。左边有一栋深色建筑，带有个小白窗，旁边挨着一个红色的热水浴缸罩，栏杆附近还立着一个黑色的烧烤架罩。阳光一直保持稳定，照亮了玻璃和木质栏杆外的绿色草坪和背景里茂密的树木。露台木板上的阴影清晰且固定不动，说明没有风，遮阳伞和附近的树叶都没有晃动。最后，明亮的阳光和空着的椅子让整个露台显得安静而静止。"
+      },
+      "video/comparison/locomotion/case_01/realcam_i2v.mp4": {
+            "en": "The video begins with a view of a wooden deck bathed in bright daylight, where a patio table and chairs sit under a large beige umbrella. To the left, a dark building with a small white window is positioned next to a red hot tub cover, and a black grill cover stands near the railing. As the sequence progresses, the sunlight remains steady, lighting up the green lawn and dense trees in the background beyond the glass and wood railing. Then, the shadows on the deck planks stay sharp and fixed in place, indicating that there is no wind moving the umbrella or the nearby leaves. Finally, the bright sun and empty chairs make the deck look quiet and still.",
+            "zh": "视频一开始展示的是阳光明亮的木制露台，上面放着一张庭院桌椅，撑着一把大的米色遮阳伞。左边有一栋深色建筑，带有个小白窗，旁边挨着一个红色的热水浴缸罩，栏杆附近还立着一个黑色的烧烤架罩。阳光一直保持稳定，照亮了玻璃和木质栏杆外的绿色草坪和背景里茂密的树木。露台木板上的阴影清晰且固定不动，说明没有风，遮阳伞和附近的树叶都没有晃动。最后，明亮的阳光和空着的椅子让整个露台显得安静而静止。"
+      },
+      "video/comparison/locomotion/case_01/worldscape_moe.mp4": {
+            "en": "The video begins with a view of a wooden deck bathed in bright daylight, where a patio table and chairs sit under a large beige umbrella. To the left, a dark building with a small white window is positioned next to a red hot tub cover, and a black grill cover stands near the railing. As the sequence progresses, the sunlight remains steady, lighting up the green lawn and dense trees in the background beyond the glass and wood railing. Then, the shadows on the deck planks stay sharp and fixed in place, indicating that there is no wind moving the umbrella or the nearby leaves. Finally, the bright sun and empty chairs make the deck look quiet and still.",
+            "zh": "视频一开始展示的是阳光明亮的木制露台，上面放着一张庭院桌椅，撑着一把大的米色遮阳伞。左边有一栋深色建筑，带有个小白窗，旁边挨着一个红色的热水浴缸罩，栏杆附近还立着一个黑色的烧烤架罩。阳光一直保持稳定，照亮了玻璃和木质栏杆外的绿色草坪和背景里茂密的树木。露台木板上的阴影清晰且固定不动，说明没有风，遮阳伞和附近的树叶都没有晃动。最后，明亮的阳光和空着的椅子让整个露台显得安静而静止。"
+      },
+      "video/comparison/locomotion/case_02/cami2v.mp4": {
+            "en": "The video begins with a view of a kitchen island featuring a speckled granite countertop and a chrome faucet under large hanging pendant lights. As the sequence progresses, the warm under-cabinet lighting shines against the mosaic tile backsplash, illuminating the dark cabinetry above while reflections on the granite countertop change slightly. Then, the stainless steel range and hood reflect the light sources as jars and utensils sit undisturbed on the counter behind the stove. Finally, the scene displays the full layout of the cooking area, showing the alignment of the toaster and storage drawers under the consistent glow of the overhead fixtures. The empty counters and bright lights make the kitchen look clean and quiet.",
+            "zh": "视频一开始展示的是厨房岛台，台面上是带斑点的花岗岩，配有镀铬水龙头，上方挂着大型吊灯。接着，温暖的柜底灯照在马赛克瓷砖墙面上，照亮了上方的深色橱柜，花岗岩台面上的反光也有轻微变化。随后，不锈钢炉灶和抽油烟机反射着灯光，炉子后面的台面上摆放着罐子和厨具，静止不动。最后，画面展示了烹饪区的整体布局，可以看到烤面包机和储物抽屉的排列，顶部灯具的光线稳定明亮。空荡的台面和明亮的灯光，让厨房显得干净又安静。"
+      },
+      "video/comparison/locomotion/case_02/matrixgame.mp4": {
+            "en": "The video begins with a view of a kitchen island featuring a speckled granite countertop and a chrome faucet under large hanging pendant lights. As the sequence progresses, the warm under-cabinet lighting shines against the mosaic tile backsplash, illuminating the dark cabinetry above while reflections on the granite countertop change slightly. Then, the stainless steel range and hood reflect the light sources as jars and utensils sit undisturbed on the counter behind the stove. Finally, the scene displays the full layout of the cooking area, showing the alignment of the toaster and storage drawers under the consistent glow of the overhead fixtures. The empty counters and bright lights make the kitchen look clean and quiet.",
+            "zh": "视频一开始展示的是厨房岛台，台面上是带斑点的花岗岩，配有镀铬水龙头，上方挂着大型吊灯。接着，温暖的柜底灯照在马赛克瓷砖墙面上，照亮了上方的深色橱柜，花岗岩台面上的反光也有轻微变化。随后，不锈钢炉灶和抽油烟机反射着灯光，炉子后面的台面上摆放着罐子和厨具，静止不动。最后，画面展示了烹饪区的整体布局，可以看到烤面包机和储物抽屉的排列，顶部灯具的光线稳定明亮。空荡的台面和明亮的灯光，让厨房显得干净又安静。"
+      },
+      "video/comparison/locomotion/case_02/videox.mp4": {
+            "en": "The video begins with a view of a kitchen island featuring a speckled granite countertop and a chrome faucet under large hanging pendant lights. As the sequence progresses, the warm under-cabinet lighting shines against the mosaic tile backsplash, illuminating the dark cabinetry above while reflections on the granite countertop change slightly. Then, the stainless steel range and hood reflect the light sources as jars and utensils sit undisturbed on the counter behind the stove. Finally, the scene displays the full layout of the cooking area, showing the alignment of the toaster and storage drawers under the consistent glow of the overhead fixtures. The empty counters and bright lights make the kitchen look clean and quiet.",
+            "zh": "视频一开始展示的是厨房岛台，台面上是带斑点的花岗岩，配有镀铬水龙头，上方挂着大型吊灯。接着，温暖的柜底灯照在马赛克瓷砖墙面上，照亮了上方的深色橱柜，花岗岩台面上的反光也有轻微变化。随后，不锈钢炉灶和抽油烟机反射着灯光，炉子后面的台面上摆放着罐子和厨具，静止不动。最后，画面展示了烹饪区的整体布局，可以看到烤面包机和储物抽屉的排列，顶部灯具的光线稳定明亮。空荡的台面和明亮的灯光，让厨房显得干净又安静。"
+      },
+      "video/comparison/locomotion/case_02/worldscape_moe.mp4": {
+            "en": "The video begins with a view of a kitchen island featuring a speckled granite countertop and a chrome faucet under large hanging pendant lights. As the sequence progresses, the warm under-cabinet lighting shines against the mosaic tile backsplash, illuminating the dark cabinetry above while reflections on the granite countertop change slightly. Then, the stainless steel range and hood reflect the light sources as jars and utensils sit undisturbed on the counter behind the stove. Finally, the scene displays the full layout of the cooking area, showing the alignment of the toaster and storage drawers under the consistent glow of the overhead fixtures. The empty counters and bright lights make the kitchen look clean and quiet.",
+            "zh": "视频一开始展示的是厨房岛台，台面上是带斑点的花岗岩，配有镀铬水龙头，上方挂着大型吊灯。接着，温暖的柜底灯照在马赛克瓷砖墙面上，照亮了上方的深色橱柜，花岗岩台面上的反光也有轻微变化。随后，不锈钢炉灶和抽油烟机反射着灯光，炉子后面的台面上摆放着罐子和厨具，静止不动。最后，画面展示了烹饪区的整体布局，可以看到烤面包机和储物抽屉的排列，顶部灯具的光线稳定明亮。空荡的台面和明亮的灯光，让厨房显得干净又安静。"
+      },
+      "video/loco_hand_motion_manipulation/case_01_pick_pillow.mp4": {
+            "en": "[Hand Motion/Manipulation] The scene takes place in a bright dining area featuring a large wooden table surrounded by dark chairs. A white ceramic pot containing a plant with broad green leaves and tall white flowers sits centrally on the table. To the left, a white-framed window allows natural light into the room, while a doorway in the background reveals a kitchen space. A person wearing a black top with red cuffs extends their right hand toward the potted plant. They grasp the stems near the flowers and gently adjust the positioning of the blooms. The hand manipulates the upper part of the plant, seemingly arranging the white flowers. The interaction is careful and focused on the greenery.\n[Locomotion] The video begins with a view of a dining room where a polished wooden table sits under a spherical chandelier, surrounded by dark chairs. Natural light streams through a white-framed window on the left, brightening the beige walls and light hardwood floors. As the sequence advances, the white orchid plant in the center of the table becomes larger and more detailed, showing its green leaves and white blooms. Then, the doorway at the back reveals more of the kitchen, including light wood cabinets and a sink beneath a window facing outdoor greenery. Finally, the table surface and orchid take up most of the view while the decorative metal stand in the corner becomes clearer and the kitchen interior remains visible in the background. The natural light coming through the windows and the empty chairs make the room feel quiet and still.",
+            "zh": "[Hand Motion/Manipulation] 场景位于一个明亮的用餐区，中央摆放着一张大木桌，周围环绕着深色椅子。桌子正中放着一个白色陶瓷花盆，里面种着一株长着宽大绿叶和高耸白花的植物。左侧有一扇白色窗框的窗户，自然光由此洒入室内，背景处的门口通向厨房空间。一名身穿黑色上衣、袖口为红色的人伸出右手，朝向盆栽植物。他们握住靠近花朵的茎干，轻轻调整花朵的位置。手部摆弄着植物的上部，似乎在整理那些白花。动作细致小心，专注于绿植。\n[Locomotion] 视频开始时展示了一个餐厅，一张光亮的木桌摆在球形吊灯下方，周围摆放着深色的椅子。自然光从左侧白色窗框的窗户照进来，照亮了米色的墙壁和浅色硬木地板。随着画面推进，桌子中央的白色兰花变得更大更清晰，能看到绿色的叶子和白色的花朵。接着，后方的门口露出了更多厨房内部，包括浅色木橱柜和窗下的水槽，窗外是绿色植物。最后，桌面和兰花占据了大部分画面，角落里的装饰金属架变得更清晰，厨房内部在背景中依然可见。透过窗户的自然光和空着的椅子，让房间显得安静。"
+      },
+      "video/loco_hand_motion_manipulation/case_02_heart_gesture.mp4": {
+            "en": "[Hand Motion/Manipulation] The scene is set outdoors facing a modern city skyline across a calm body of water during twilight. Tall skyscrapers with illuminated windows dominate the distant background under a sky filled with purple and pink clouds. The water in the immediate foreground appears dark blue and smooth. No other objects are visible besides the urban landscape. Initially, the view is unobstructed. Then, two hands rise into the frame from the bottom corners. The fingers curve inward to touch at the tips, forming a heart shape centered against the buildings. The hands hold this gesture steady, framing the cityscape within the shape made by the thumbs and index fingers.\n[Locomotion] The video begins with a view of a modern city skyline stretching across the horizon, where a dense cluster of skyscrapers rises from the shore opposite a dark body of water under a sky painted with soft purple and pink clouds. Tall buildings with illuminated windows line the waterfront, including a prominent twisted tower that stands out among the rectangular structures. As the video progresses, the water in the foreground shows a soft, blurred texture that suggests a steady current flowing past, while the buildings remain fixed in place. Then, the artificial lights from the offices and apartments continue to shine brightly against the twilight backdrop without flickering or changing intensity. Finally, the skyline remains unchanged as the evening light holds constant. The smooth water and steady lights make the city look quiet and still for the night.",
+            "zh": "[Hand Motion/Manipulation] 场景设定于户外，黄昏时分，隔着平静的水面面向现代城市天际线。远处背景中，窗户灯火通明的高耸摩天大楼占据主导，天空布满紫色和粉色的云彩。紧邻前景的水面呈现深蓝色，平滑如镜。除城市景观外，不见其他物体。起初，视野无遮挡。随后，双手从画面底部角落升起。手指向内弯曲，指尖相触，形成一个心形，居中衬于楼宇之前。双手保持该手势静止，将城市景观框在由拇指和食指构成的形状之中。\n[Locomotion] 视频一开始看到的是横跨地平线的现代城市天际线，密集的摩天大楼从岸边升起，对面是一片深色的水域，天空中飘着柔和的紫粉色云朵。亮着窗户的高楼沿着水岸排列，其中一座醒目的扭曲状塔楼在周围的矩形建筑中显得格外突出。随着视频进行，近处的水面呈现出柔和模糊的质感，看起来像是有稳定的水流经过，而建筑物保持静止不动。随后，办公室和公寓的灯光在暮色中持续明亮地照耀，没有闪烁或亮度变化。最后，天际线没有变化，傍晚的光线保持稳定。平静的水面和稳定的灯光让这座城市在夜晚显得安静而静止。"
+      },
+      "video/loco_hand_motion_manipulation/case_03_peace_sign.mp4": {
+            "en": "[Hand Motion/Manipulation] This bright kitchen features white cabinetry and black countertops. Stainless steel appliances, including a microwave and dishwasher, are visible. A silver kettle sits on the counter near a double sink beneath a window letting in natural light. Open shelving under the island holds stacked plates, and a framed picture hangs on the wall. The wearer raises their left hand into the frame and performs a series of gestures. Initially, the hand points forward before shifting into a peace sign with two fingers extended. The hand holds this position briefly before changing into a thumbs-up gesture. No objects are grasped; the action consists entirely of signaling with an open hand against the kitchen backdrop.\n[Locomotion] The video begins with a view of a sunlit kitchen centered around a double sink situated beneath two tall windows that look out onto greenery. To the right, open shelving holds white mugs and a silver mixer sits on the black countertop near a window wall, next to a wooden knife block. As the scene reveals more of the left side, a wooden countertop section and a large island with a smooth black surface become visible in the foreground. Then, white upper cabinets and a stainless steel microwave appear above a black stovetop. Finally, the full cooking range and oven are seen on the far left, marking the end of the workspace. The bright daylight coming through the windows and the empty countertops make the kitchen feel quiet and still.",
+            "zh": "[Hand Motion/Manipulation] 这间明亮的厨房设有白色橱柜和黑色台面。可见不锈钢电器，包括微波炉和洗碗机。一个银色水壶放在台面上，靠近窗户下方的双水槽，自然光透过窗户洒入。岛台下方的开放式搁架上摆放着叠好的盘子，墙上挂着一幅带框的画。佩戴者将左手举入画面，做出一系列手势。起初，手向前指，随后变为伸出两根手指的和平手势。手短暂保持该姿势，随后变为竖起大拇指的手势。未抓握任何物体；整个动作完全是在厨房背景下用张开的手进行示意。\n[Locomotion] 视频开始时，画面展示了一个阳光充足的厨房，中心是一个双水槽，位于两扇高窗下方，窗外可以看到绿植。右侧是开放式搁架，放着白色马克杯，黑色台面上有一台银色搅拌机，靠近窗户，旁边是个木制刀架。接着能看到左侧有一段木制台面，前景处有一个表面光滑的黑色大岛台。黑色炉灶上方是白色吊柜和一台不锈钢微波炉。最左边是完整的炉灶和烤箱，这里是工作区的尽头。透过窗户进来的明亮日光和空空的台面，让厨房显得安静、静止。"
+      },
+      "video/loco_hand_motion_manipulation/case_04_prayer_gesture.mp4": {
+            "en": "[Hand Motion/Manipulation] The scene captures an outdoor landscape at sunrise, featuring a bright yellow sun hanging low in an orange sky. Below, a calm body of water reflects the sunlight, while low-lying mist hovers just above the surface. Dark silhouettes of trees line the distant shore, creating a serene backdrop with warm, golden lighting. Gentle ripples disturb the water near the foreground. A pair of hands enters the foreground, silhouetted against the bright light. The wearer raises both arms and positions the fingertips together to form a peak shape. Then, the palms press firmly together in a prayer-like gesture, framing the sun. The hands hold this steady position for the duration, maintaining the pose against the scenic background.\n[Locomotion] The video begins with a bright sun hanging low over a dark tree line, filling the sky with warm orange and yellow hues while a thick layer of mist covers the surface of the water. As the video continues, the sunlight reflects strongly down the center of the lake, creating a shimmering path on the rippling surface. The fog drifts slowly near the base of the trees, remaining dense in the background while the foreground water stays clear and visible. Then, the light appears to strengthen slightly, making the reflection on the water brighter as the mist continues to hover just above the waves. Finally, the sun remains fixed above the horizon, casting a consistent glow over the stationary trees and moving water. The steady sun and low fog make the lake look warm and calm.",
+            "zh": "[Hand Motion/Manipulation] 画面捕捉了日出时分的户外景观，一轮明亮的黄色太阳低垂于橙色的天空中。下方，平静的水面映照着阳光，低悬的薄雾漂浮于水面之上。远处岸边排列着树木的黑色剪影，构成了宁静的背景，沐浴在温暖的金色光线中。近景处的水面泛起细微的涟漪。一双手进入前景，在强光映衬下呈现剪影效果。此人抬起双臂，指尖相触构成尖顶状。随后，手掌紧紧合十，呈祈祷状，将太阳框在其中。双手全程保持这一静止姿势，在风景背景的衬托下维持不动。\n[Locomotion] 视频开始时，明亮的太阳低低地挂在深色树林上方，天空呈现出温暖的橙黄色调，水面上覆盖着一层厚厚的雾气。接着，阳光强烈地反射在湖中央，在波动的水面上形成一条闪烁的光路。雾气在树根附近缓慢飘动，背景处雾气较浓，前景的水面则清晰可见。随后，光线似乎稍微变强，水面的反光变得更亮，雾气继续停留在水波上方。最后，太阳固定在地平线上方，向静止的树木和波动的水面投下稳定的光芒。稳定的阳光和低处的雾气让湖面看起来温暖而平静。"
+      },
+      "video/loco_hand_motion_manipulation/case_05_grab_bear.mp4": {
+            "en": "[Locomotion] The video begins with a view of a modern office interior featuring a mezzanine level with glass railings and blue carpeting under bright fluorescent tube lighting. A yellow door frame stands open in the background hallway, flanked by white walls and dark structural columns, while an orange stool and a blue office chair sit stationary near the railing on the right side. As the sequence progresses, more of the left wall is visible, showing a whiteboard with diagrams mounted next to a white pillar, matching the larger whiteboard covered in blue markings on the right wall. The exit sign above the corridor remains lit throughout, and the glass barriers reflect the overhead lights without any distortion. Finally, the full extent of the mezzanine is visible, showing the stairs leading down to the lower floor through the glass panels. The bright overhead lights and lack of movement make the office look quiet and still.\n[Hand Motion/Manipulation] A realistic human hand enters from the lower part of the frame, reaches toward the teddy bear, wraps the fingers around the toy body, and grasps it securely. The hand then lifts the teddy bear upward until the toy fills the foreground, holding it steadily in front of the office mezzanine and glass-railing background. Preserve natural human hand anatomy and avoid extra fingers, extra hands, text, or graphic overlays.",
+            "zh": "[Locomotion] 视频开始展示了一个现代办公室内部，可见一个夹层，配有玻璃栏杆，铺着蓝色地毯，上方是明亮的荧光灯管。背景走廊里有个黄色门框开着，两侧是白墙和深色结构柱。右侧栏杆旁放着一个橙色凳子和一把蓝色办公椅，始终静止不动。随后左侧墙面显露得更多，上面挂着一个画有图表的白板，紧邻一根白色柱子，与右墙上那个写满蓝色字迹的大白板相对应。走廊上方的出口标志全程亮着，玻璃护栏反射着头顶的灯光，没有变形。最后，夹层的全貌都显现出来，透过玻璃板能看到通向楼下的楼梯。明亮的顶灯和没有什么动静，让办公室看起来安静静止。\n[Hand Motion/Manipulation] 一只真实的人手从画面下方进入，伸向前方的小熊玩具，手指环绕玩具身体后将其抓住。随后，手将小熊从画面下方抬起，使玩具逐渐占据前景，并在办公室夹层和玻璃栏杆背景前稳定举起。动作应保持自然的人手形态，避免出现多余手指、额外手部、文字或图形叠加。"
+      },
+      "video/loco_hand_motion_manipulation/case_06_outdoor_arm_control.mp4": {
+            "en": "[Locomotion] The video begins with a view of a vast wheat field stretching toward a distant horizon under a sky filled with orange and purple clouds during sunset. As the sequence moves forward, the golden wheat stalks in the foreground sway rhythmically in the wind, bending and returning to their position while the sun remains fixed just above the hills. The light stays bright and warm throughout, illuminating the texture of the grains and casting a soft glow over the rolling landscape without any significant changes in shadow or color. Then, the clouds hang steadily in the upper sky, framing the sun while the movement of the crops continues uninterrupted across the frame. Finally, the video concludes with the field still bathed in the evening light as the wheat continues to move in the breeze. The scene looks calm and warm because the sun is low and the wheat moves slowly in the empty field.\n[Arm Manipulation] Use two robotic arms to grasp a single wheat stalk and lift it steadily.",
+            "zh": "[Locomotion] 视频一开始，画面里是一片广阔的麦田，一直延伸到远处的地平线。正值日落，天空中布满了橙色和紫色的云。随着视频播放，前景金色的麦秆在风中有节奏地摇摆，弯下后又弹回原位，太阳则一直固定在山丘上方。全程光线明亮温暖，照亮了麦粒的纹理，让起伏的地面泛着柔和的光，阴影和颜色没有明显变化。随后，云朵稳稳地悬在高空，环绕着太阳，庄稼的摆动在画面中持续不断。最后，视频结束时，田野依然沐浴在傍晚的光线里，小麦继续在微风中摆动。整个场景显得平静温暖，因为太阳位置很低，小麦在空旷的田野里缓慢摆动。\n[Arm Manipulation] 使用两个机械臂抓起一根小麦，并将其稳定拿起。"
+      },
+      "video/loco_hand_motion_manipulation/case_07_indoor_arm_control.mp4": {
+            "en": "[Locomotion] The video begins with a full view of a bright kitchen featuring white subway tiles, black cabinetry, and wooden countertops illuminated by a hanging metal light fixture and natural light from a window on the left. A red pot sits on a small wooden island in the foreground, while a stainless steel dish rack mounted on the wall holds white plates and glasses. As the sequence progresses, the red pot on the island appears larger and the details of the dish rack become clearer, while the sink on the left is no longer fully visible. The stainless steel range hood and the stove become more prominent, highlighting the red salt and pepper shakers and a white pot resting on the burners. Finally, the corner workspace takes up most of the scene, emphasizing the organized dishes above and the fresh herbs lying near the red pot on the island. The bright overhead light and tidy counters make the kitchen feel clean and ready for use.\n[Arm Manipulation] Use two robotic arms to grasp the red pot on the table, lift it, and place it back down.",
+            "zh": "[Locomotion] 视频一开始展示了明亮厨房的全景，白色长条瓷砖、黑色橱柜和木质台面，在悬挂的金属灯具和左侧窗户自然光的照射下显得很亮。前景的小型木质中岛台上放着一个红锅，墙上安装的不锈钢碗碟架里放着白色盘子和玻璃杯。随着视频继续，岛台上的红锅显得更大，碗碟架的细节更清晰，左侧的水槽则不再完全看得见。不锈钢抽油烟机和炉灶变得更显眼，能看清炉头上的红色盐和胡椒瓶，还有一个白锅放在上面。最后，角落的操作区占据了大部分画面，重点展示了上方整理好的餐具，以及岛台红锅旁的新鲜香草。明亮的顶灯和整洁的台面让厨房显得干净，随时可以使用。\n[Arm Manipulation] 使用两个机械臂抓起桌子上的红色锅，然后将其放回桌面。"
+      },
+      "video/physics_consistency/case_01.mp4": {
+            "en": "The video begins with a stylized river flowing through a landscape constructed of blocky pine trees and grassy banks. The water moves between shores lined with gray stone blocks and patches of green grass, while tall trees stand on either side under a pale sky tinged with pink. As the sequence continues, the surface of the river ripples and reflects the light, causing white foam patterns to shift along the edges where the water meets the rocks. The lighting remains soft and consistent, casting gentle shadows from the trees onto the ground without any significant changes in brightness. Then, the current carries the water downstream past the scattered boulders. Finally, the water flows steadily between the rocks and trees under a soft pink sky, and the rest of the scene stays still.",
+            "zh": "视频一开始，一条风格化的河流流经由方块状松树和草岸组成的景观。水流在两岸间流动，岸边排列着灰色石块和绿色草皮，高大的树木矗立两侧，天空呈淡粉色。随后，河面泛起涟漪并反射光线，水与岩石交界处的白色泡沫纹路随之移动。光线始终保持柔和稳定，树木在地面投下淡淡的阴影，亮度无明显变化。之后，水流向下游流去，经过散落的巨石。最后，水流在岩石和树木间稳定流动，头顶是柔和的粉色天空，其余景物保持静止。"
+      },
+      "video/physics_consistency/case_02_right_locomotion.mp4": {
+            "en": "The video begins with a stylized river flowing from the foreground toward the distance through a low-poly landscape made of blocky pine trees, green grassy banks, and gray stone blocks. The river surface is deep blue, with white foam and small ripples forming between the rocks, while tall pine trees line both sides of the water and purple rock walls and layered tree canopies appear farther away. As the video progresses, the camera moves smoothly toward the right side of the river. The tree trunks and stone bank in the foreground shift relative to the frame, while the grassy bank, wooden posts, and distant pine forest on the right gradually open up with the changing viewpoint. The water reflections, foam patterns, and downstream flow remain continuous; the rocks do not drift, and the trees and riverbanks stay fixed in physically plausible positions. Then, the central river stones and surrounding vegetation become clearer, while the sky keeps its soft pink-purple tone and the lighting remains stable without abrupt changes in brightness or color. Finally, the camera settles into a more rightward view of the river, with the water still moving downstream between the stones and the forest, banks, and distant rock walls remaining stationary, demonstrating consistent scene geometry and water physics under camera motion.",
+            "zh": "视频一开始，一条风格化的河流从画面前方流向远处，穿过由方块状松树、绿色草岸和灰色石块组成的低多边形景观。河面呈深蓝色，水流在岩石之间形成白色泡沫和细小涟漪，两侧高大的松树沿河岸排列，远处还有紫色岩壁和层叠的树冠。随着视频播放，镜头沿着河道向右侧平滑移动，前景左侧的树干和石岸逐渐发生相对位移，右侧草岸、木桩和远处松林也随视角变化缓慢展开。水面反光、泡沫纹理和河流方向保持连续，石块没有漂移，树木和河岸结构始终固定在合理位置。随后，河道中央的岩石和两岸植被变得更加清晰，天空保持柔和的粉紫色，整体光照稳定，没有突然的亮度或颜色变化。最后，镜头停留在更靠右的河流视角，水流仍然在石块之间向下游流动，森林、草岸和远处岩壁保持静止，体现出相机运动下场景几何和水体物理的一致性。"
+      },
+      "video/physics_consistency/case_03.mp4": {
+            "en": "The video begins with a group of jellyfish floating in a dark tank, their bells glowing with soft purple and orange light against the deep blue water. As the central jellyfish pulses gently, its long tentacles trail and sway beneath it while small bubbles rise through the water. Then, other jellyfish in the background drift slowly at different depths near a rocky structure on the left side, with small particles floating around them. Finally, the central jellyfish hovers steadily in place as the others continue to float around it in the dim light. The dark water and slow drifting of the animals make the tank feel quiet and still.",
+            "zh": "视频开始时，一群水母漂浮在昏暗的水箱里，伞盖发出柔和的紫色和橙色光，衬着深蓝色的水。中间的一只水母轻轻脉动，长长的触手垂在下方摇摆，同时有小气泡在水中升起。背景里，其他水母在左侧岩石结构附近的不同深度缓慢漂浮，周围悬浮着一些细小颗粒。最后，中间的水母稳稳地悬停在原地，其他水母继续在昏暗的光线下围绕它漂浮。深色的水和它们缓慢的漂浮让水箱里显得很安静。"
+      },
+      "video/physics_consistency/case_04.mp4": {
+            "en": "The video begins with several burger patties cooking on a metal grill grate, where bright orange flames flare up between the bars and lick at the meat. As the sequence progresses, the fire intensifies beneath the patties, casting a warm, flickering glow across the seared surfaces and highlighting the dark grill marks forming on the browned meat. Smoke rises steadily from the dripping fat, drifting upward and mixing with the air around the patties, while the flames continue to burn brightly on both the left and right sections of the grill. Then, the smoke becomes slightly thicker, hanging over the cooking food and making the dark background behind the grate look blurry. Finally, the patties remain stationary on the hot metal bars, surrounded by the constant motion of the fire and the rising gray smoke. The bright flames and rising smoke make the grill feel very hot.",
+            "zh": "视频开始时，几个汉堡肉饼正在金属烤架上烤制，明亮的橙色火焰从烤架缝隙中窜出，烧着肉饼。随后，肉饼下方的火势变大，暖光在烤熟的表面闪烁，显现出褐色肉饼上形成的深色烤痕。烟雾从滴下的油中不断升起，向上飘散在肉饼周围，同时烤架左右两侧的火焰继续明亮燃烧。接着，烟雾变浓了一些，笼罩在食物上方，让烤架后方的深色背景变得模糊。最后，肉饼静止在滚烫的金属烤架条上，周围是不断跳动的火焰和升起的灰色烟雾。明亮的火焰和升起的烟雾让烤架看起来非常烫。"
+      },
+      "video/physics_consistency/case_05_forward_locomotion.mp4": {
+            "en": "The video begins with a view of a modern kitchen featuring a large central island with a glossy green countertop and three stools tucked underneath. To the right, a stainless steel refrigerator stands next to a range hood, while large windows along the back and left walls reveal dense green trees outside. As the sequence continues, more of the left side of the room comes into view, bringing a secondary counter with a sink into clearer focus while the refrigerator gradually moves out of sight. Then, the sunlight streaming through the glass panes casts bright reflections on the polished island surface and illuminates the wooden floor. The pendant lights hang stationary above the island throughout the sequence. Finally, the open space near the glass doors becomes the main focus, highlighting the connection between the interior and the bright foliage outside. The empty stools and sunlight on the floor make the kitchen feel quiet and still.",
+            "zh": "视频开始时展示了一个现代厨房，中间有个大岛台，台面是光亮的绿色，下面收着三把凳子。右边是一台不锈钢冰箱，挨着抽油烟机，后墙和左墙的大窗户外面能看到茂密的绿树。随着视频继续，房间左侧更多部分显现出来，另一处带水槽的操作台看得更清楚了，冰箱则逐渐看不见了。阳光透过玻璃窗照进来，在光亮的岛台表面形成明亮的反光，也照亮了木地板。整个视频中，岛台上方的吊灯一直静止悬挂着。最后，玻璃门附近的空旷区域成为重点，突出了室内与室外明亮绿植的联系。空着的凳子和地板上的阳光，让厨房显得很安静。"
+      },
+      "video/physics_consistency/case_06_terrestrial_landscape_left_locomotion.mp4": {
+            "en": "The video begins with a view of a brown wooden structure on the right side, positioned next to a forest of blocky pine trees topped with snow under a blue sky with scattered clouds. As the sequence progresses, the scene displays more of the dense evergreen forest in the foreground, while the large mountains in the background catch the sunlight on their rocky peaks. Then, the wooden building is visible only on the extreme edge of the view, allowing the tall trees and the rugged mountain range to dominate the scene. Finally, the sun glares brightly from the upper left over the mountain ridge, casting light across the snowy landscape while the wooden structure remains barely visible on the side. The sun shining on the snow and the quiet trees make the place look cold and calm.",
+            "zh": "视频一开始，画面右侧有个棕色木制建筑，旁边是一片方块状的松树林，树顶覆盖着积雪，天空湛蓝，飘着几朵云。随着视频继续，前景呈现出更多茂密的常绿森林，背景里的大山岩石峰顶照到了阳光。之后，木制建筑只在画面最边缘露出一点，高大的树木和崎岖的山脉占据了大部分画面。最后，太阳从左上方的山脊后明亮地照射出来，光线洒在雪地上，木制建筑在旁边几乎看不见了。阳光照在雪地上，加上安静的树木，让这个地方看起来寒冷而平静。"
+      },
+      "video/physics_consistency/case_07_verdant_landscape_pan_left_locomotion.mp4": {
+            "en": "The video begins with a watercolor painting of a white building with a tall tower standing near a calm body of water, framed by dark pine trees and misty mountains in the background under soft, diffuse light. As the sequence progresses, the composition changes to show more of the large, dark pine branches hanging over the water on the left, while the building and tower occupy the right side. Then, the reflection of the structure in the water becomes less central as the foreground foliage takes up more space. Finally, the scene displays mostly the heavy pine branches and the open water with the mountain faintly visible in the distance. The lack of motion in the water and the soft gray tones make the scene look calm and quiet.",
+            "zh": "视频开头是一幅水彩画，画里有一座带高塔的白色建筑，立在平静的水边，周围围着深色松树，背景的山上有雾气，让画面显得模糊，光线柔和均匀。随后，画面布局发生变化，左侧垂在水面上的深色松树枝变多了，建筑和塔位于右侧。接着，水中建筑的倒影不再那么居中，前景的枝叶占据了更多空间。最后，画面里主要是茂密的松树枝和开阔的水面，远处的山隐约可见。水面没有波动，加上柔和的灰色调，让场景看起来平静安宁。"
+      },
+      "video/physics_consistency/case_08_forward_locomotion.mp4": {
+            "en": "The video begins with a curved planetary surface covered in soft pink and white clouds, illuminated by a bright blue atmospheric haze along the horizon. A dark spherical moon sits centrally above the horizon, blocking the light source and creating a glowing rim around its edge, while two large planets hang in the upper sky, one blue and textured on the left and another with visible rings on the right. As the video progresses, the camera moves forward along the planetary surface, and the light behind the central moon shifts subtly, making the cloud glow and atmospheric edge more pronounced. The clouds over the foreground planet drift slowly, changing the distribution of light and shadow across the surface. Finally, the planets and moon remain stably aligned as the blue rim light continues to illuminate the horizon, leaving the scene calm, vast, and open.",
+            "zh": "视频开始时，画面呈现一个弯曲的行星表面，覆盖着柔和的粉白色云层，地平线处有一层明亮的蓝色大气雾气。一个深色球形卫星位于地平线上方中央，遮挡住光源，边缘形成一圈光晕，上空悬挂着两颗巨大的行星，左侧一颗呈蓝色且有纹理，右侧一颗带有行星环。随着视频进行，镜头沿行星表面向前推进，中央卫星背后的光线略微变化，使云层上的光晕和大气边缘更加明显。前景行星上的云层缓慢漂移，改变了表面光影分布。最后，行星和卫星的排列保持稳定，蓝色边缘光继续照亮地平线，场景显得安静、宏大且空旷。"
+      },
+      "video/showcase/hand_motion/case_01_bed_bowls.mp4": {
+            "en": "The setting is a shelf-like space with a purple cloth surface and a draped pink fabric backdrop. Several ceramic bowls sit on the cloth, including a single dark teal bowl, a stack of light blue bowls, a stack of light green bowls, and a single lavender bowl positioned in the foreground. The wearer reaches forward with their left hand to grasp the lavender bowl. They lift it and move it towards the dark teal bowl. The hand places the lavender bowl on top of the dark teal one, creating a new stack. After settling the top bowl, the hand adjusts the position before reaching toward the adjacent light blue stack.",
+            "zh": "场景是一个类似架子的空间，表面铺有紫色布料，背景是粉色垂褶织物。布面上放着几个陶瓷碗，包括一个单独的深青色碗、一叠浅蓝色碗、一叠浅绿色碗，以及位于前景的一个单独淡紫色碗。佩戴者伸出左手向前抓取淡紫色碗，将其抬起并移向深青色碗。手将淡紫色碗放在深青色碗上面，形成新的一叠。放稳顶部的碗后，手调整了一下位置，然后伸向相邻的浅蓝色碗叠。"
+      },
+      "video/showcase/hand_motion/case_02_bed_air_purifier.mp4": {
+            "en": "The scene shows a light green sheet beneath a wooden structure, with a dark blue pillow against the wall. Centered on the sheet is a white object composed of a square base with a stem and spherical knob, initially covered by a cylindrical cup. The person wears a white knitted sweater. The wearer approaches with hands hovering near the white object. The left hand stabilizes the square base while the right hand grasps the cylindrical cup. The right hand lifts the cup vertically to reveal the spherical knob underneath. Finally, the right hand holds the removed cup aside while the left hand keeps the base in place.",
+            "zh": "场景显示木质结构下方铺着一块浅绿色布单，墙边靠着一个深蓝色枕头。布单中央是一个白色物体，由方形底座、杆和球形旋钮组成，最初被一个圆柱形杯子罩住。人物身穿白色针织毛衣。此人走近，双手悬停在白色物体上方。左手固定方形底座，右手抓住圆柱形杯子。右手垂直向上提起杯子，露出下方的球形旋钮。最后，右手将取下的杯子持于一旁，左手保持底座原位。"
+      },
+      "video/showcase/hand_motion/case_03_bed_boxes.mp4": {
+            "en": "The scene features a surface covered with a dark blue cloth against a backdrop of draped pink fabric within a shelf space. Two small white objects rest on the surface. One is a rectangular box frame with an open slot, and the other is a matching white drawer tray lying separately nearby. A finger points at the objects initially. The wearer reaches in with their right hand to grasp the separate white drawer tray. Using both hands, they stabilize the box frame with the left hand while sliding the tray towards it. The wearer aligns the tray with the open slot and pushes it inward to assemble the unit.",
+            "zh": "场景展示了一个铺有深蓝色布料的表面，背景是置物架内悬挂的粉色褶皱布料。表面上放置着两个白色小物体。一个是带有开口的矩形盒框，另一个是配套的白色抽屉托盘，单独放置在附近。起初，一根手指指向这些物体。佩戴者伸出右手抓取那个单独的白色抽屉托盘。双手配合，左手稳住盒框，同时将托盘滑向盒框。佩戴者将托盘与开口对齐，并向内推入以组装该组件。"
+      },
+      "video/showcase/hand_motion/case_04_table_toys.mp4": {
+            "en": "The scene features a flat yellow surface backed by a brown curtain and plain wall. Several small objects are scattered across the table, including a red plastic cup standing upright near the center. To the left lies a blue clustered item, while a curved orange piece and a yellow shape sit nearby. Small cubes are also present, including a transparent piece near the cup. The wearer begins with hands hovering near the bottom edge. The right hand reaches forward to grasp the small transparent cube. The hand lifts the object and moves it directly over the opening of the red cup. Finally, the wearer drops the cube into the cup while the left hand remains stationary.",
+            "zh": "场景展示了一个平坦的黄色表面，背景为棕色窗帘和素色墙壁。桌面上散落着若干小物体，包括一个靠近中央直立的红色塑料杯。左侧有一个蓝色簇状物品，附近还有一个弯曲的橙色部件和一个黄色形状物体。此外还有小立方体，包括杯子附近的一个透明块。佩戴者开始时双手悬停在底部边缘附近。右手向前伸去抓取那个小透明立方体。手拿起物体，将其直接移动到红色杯口的正上方。最后，佩戴者将立方体放入杯中，左手保持静止。"
+      },
+      "video/showcase/hand_motion/case_05_shirt_lint_roller.mp4": {
+            "en": "A flat yellow surface sits in the corner of a room with plain beige walls. The lighting is warm, casting soft shadows near the walls. An orange long-sleeved shirt with a knit texture lies spread out on the surface. A lint roller featuring a white adhesive roll and grey handle is held in the right hand, which is covered by a dark sleeve. The wearer stabilizes the left side of the orange shirt with their left hand, also covered by a black sleeve. Using the right hand, they press the lint roller onto the fabric and sweep it from the center towards the right edge. The roller moves smoothly across the material to clean the surface.",
+            "zh": "房间角落放置着一个平坦的黄色平面，四周是素净的米色墙壁。光线温暖，在墙边投下柔和的阴影。一件具有针织纹理的橙色长袖衬衫平铺在该平面上。右手握着一个配有白色粘胶卷和灰色手柄的粘毛滚筒，手臂穿着深色袖子。穿着者用左手按住橙色衬衫的左侧以固定，左手同样穿着黑色袖子。随后用右手将粘毛滚筒压在织物上，从中心向右边缘滚动清扫。滚筒在材料表面平滑移动，完成清洁。"
+      },
+      "video/showcase/libero/case_01_wine_bottle_cabinet.mp4": {
+            "en": "Put the wine bottle on top of the cabinet.",
+            "zh": "将葡萄酒瓶放到柜子顶部。"
+      },
+      "video/showcase/libero/case_02_cream_cheese_bowl.mp4": {
+            "en": "Put the cream cheese in the bowl.",
+            "zh": "将奶油奶酪放入碗中。"
+      },
+      "video/showcase/libero/case_03_wine_bottle_cabinet.mp4": {
+            "en": "Put the wine bottle on top of the cabinet.",
+            "zh": "将葡萄酒瓶放到柜子顶部。"
+      },
+      "video/showcase/libero/case_04_wine_bottle_rack.mp4": {
+            "en": "Put the wine bottle on the rack.",
+            "zh": "将葡萄酒瓶放到架子上。"
+      },
+      "video/showcase/libero/case_05_wine_bottle_rack.mp4": {
+            "en": "Put the wine bottle on the rack.",
+            "zh": "将葡萄酒瓶放到架子上。"
+      },
+      "video/showcase/locomotion/case_01_terrestrial_landscape.mp4": {
+            "en": "The video begins with orange sand dunes casting long dark shadows under warm sunlight, featuring a solitary tree standing on the left against a backdrop of distant purple mountains topped with snow. As the video progresses, more of the rolling sand hills become visible leading toward a line of green vegetation that stretches across the middle ground. Then, the dunes slope down towards small pools of water appearing in the lower right, reflecting the sky above. Finally, clusters of bushes surround the water edges with the snow-capped mountain range fully visible across the horizon. The bright sun and empty sand make the desert look warm and still.",
+            "zh": "视频一开始，温暖的阳光照在橙色沙丘上，投下长长的深色阴影，左侧立着一棵孤树，背景是远处山顶积雪的紫色山脉。随着视频继续，更多起伏的沙丘显现出来，延伸向画面中间的一排绿色植被。接着，沙丘向下倾斜，右下角出现小水洼，倒映着天空。最后，一丛丛灌木环绕在水边，地平线上完全展现出积雪的山脉。明亮的阳光和空旷的沙地，让沙漠显得温暖而宁静。"
+      },
+      "video/showcase/locomotion/case_02_locomotion.mp4": {
+            "en": "The video begins with a wide view of a room with light green walls and hardwood floors, showing a large wooden armoire on the right and an open doorway to a pink room on the left. As the sequence continues, the visible space shifts toward the central open doorway, moving past a small green plant on a metal stand and a wastebasket near the wall. Then, the surrounding walls and furniture are no longer visible as the hallway leading to a bathroom becomes the main subject, revealing framed pictures and square wall decorations more clearly. Finally, the scene ends with a direct look into the bathroom entrance, displaying a white dresser, a mirror, and bright recessed lighting inside. The empty rooms and steady warm light make the house feel quiet and still.",
+            "zh": "视频开始时是一个房间的全景，墙壁浅绿色，铺着实木地板，右边有个大木衣柜，左边有个敞开的门口，通向一个粉色的房间。接着，视线移向中央的敞开门，经过金属架上的一个小绿植和墙边的一个废纸篓。随后，周围的墙壁和家具不再可见，通往浴室的走廊成了主要画面，能更清楚地看到带框的图片和方形的墙面装饰。最后，画面正对着浴室入口，里面能看到一个白色梳妆台、一面镜子和明亮的嵌入式灯光。空着的房间和稳定的暖光，让房子显得安静而静止。"
+      },
+      "video/showcase/locomotion/case_03_locomotion.mp4": {
+            "en": "The video begins with a view over the back of a beige sofa facing a home theater setup with a television mounted above a stone fireplace and flanked by black speakers. Recessed lights in the white ceiling illuminate the wood-style flooring and a dark coffee table centered on a rug, while a half-wall on the left separates the room from a kitchen with dark cabinets. As the sequence progresses, the scene reveals more of the right wall, showing a decorative sconce hanging next to a bright window that floods the space with natural light. Then, the edge of a white table surface appears in the bottom right corner, while the kitchen area on the left is gradually excluded from the scene. Finally, the arrangement of the media rack, subwoofer, and seating area is fully shown under the consistent glow of the overhead lights. The bright light from the window and the empty furniture make the room feel quiet and still.",
+            "zh": "视频开始时，画面显示的是米色沙发靠背前方的景象，正对着一个家庭影院区域。电视挂在石砌壁炉上方，两侧配有黑色音箱。白色天花板上的筒灯照亮了木纹地板，以及地毯中央的一张深色咖啡桌。左侧有一道半墙，将这个房间与装有深色橱柜的厨房隔开。随着画面继续，右侧墙壁更多内容显现出来，可以看到一盏装饰壁灯挂在一扇明亮的窗户旁，自然光洒满室内。随后，右下角露出了一张白色桌子的边缘，左侧的厨房区域则逐渐不在画面中。最后，媒体架、低音炮和座位区的布局在顶部灯光的照射下完整呈现。窗户透进的明亮光线，加上稀疏的家具陈设，让房间显得安静而静止。"
+      },
+      "video/showcase/locomotion/case_04_locomotion.mp4": {
+            "en": "The video begins with a look at a furnished apartment interior with a dining area on the left featuring a dark wood table, chairs, and a vase of tall yellow flowers under a chandelier. As the sequence continues, the living space becomes the main focus with a grey sofa adorned with throw pillows sitting against a white wall beneath a landscape painting. Two patterned armchairs face inward toward silver nesting tables on a grey rug, while a console table with a glowing lamp stands against the wall on the right. Then, a large window with closed white blinds becomes visible on the far right, casting bright natural light across the polished hardwood floors. Finally, the seating area is fully shown with the daylight from the window mixing with the warm artificial light from the lamp. The empty room feels quiet and still with the bright light from the window reflecting off the hardwood floors and the furniture sitting in place without anyone around.",
+            "zh": "视频一开始展示的是布置好的公寓内部，左边是用餐区，有一张深色木桌和椅子，吊灯下方摆着插着高高黄色花朵的花瓶。随后，起居空间成为主要画面，灰色沙发上放着抱枕，靠白墙摆放，上方挂着一幅风景画。两把带图案的扶手椅相对摆放，对着灰色地毯上的银色嵌套茶几，右侧墙边还有一张长条桌，上面放着一盏亮着的灯。接着，最右侧可以看到一扇大窗户，白色百叶窗关着，明亮的自然光照在光亮的硬木地板上。最后，座位区域完整展现，窗外的日光与温暖的灯光混合在一起。空房间显得安静静止，明亮的窗光反射在硬木地板上，家具摆在原位，周围没有人。"
+      },
+      "video/showcase/locomotion/case_05_locomotion.mp4": {
+            "en": "The video begins with a view of a backyard pool area shaded by the overhanging branches of a large tree, with two lounge chairs positioned on the concrete deck in the foreground. As the sequence progresses, the lounge chairs gradually disappear from the bottom right, revealing more of the smooth blue water and the stone coping along the pool's edge. Then, the open green lawn becomes fully visible, stretching toward a line of trees and distant hills under a bright sky. Finally, the scene centers on the empty deck and water under the tree leaves, where sunlight filters through to cast dappled shadows on the grass. The bright sun and empty chairs make the backyard look quiet and still.",
+            "zh": "视频开始时看到的是后院泳池区，上方有大树枝叶遮挡，前景的混凝土地面上摆着两把躺椅。接着，躺椅从右下角慢慢消失，露出更多平静的蓝色水面和池边的石沿。然后，开阔的绿色草坪完全显现出来，一直延伸到一排树木和远处的山丘，天空很明亮。最后，画面主要展示树荫下的空平台和水面，阳光透过树叶在草地上投下斑驳的影子。明亮的阳光和空椅子让后院显得安静而静止。"
+      },
+      "video/showcase/locomotion/case_06_locomotion.mp4": {
+            "en": "The video begins with a view of the exterior side of a white house, showing a white garage door and utility meters mounted on the siding near a driveway. As the path extends away from the garage, a low retaining wall constructed of red bricks runs parallel to the house, holding back a small garden bed with weeds and grass. Green shutters flank the windows on the first floor, and the walkway leads toward the back of the home where an American flag hangs from the second story. Then, the concrete path passes a large green bush near the corner of the house, with small solar lights lining the edge of the expansive green lawn on the right. Finally, the walkway leads into the shaded area under large trees where the flag is displayed, showing the path disappearing into the foliage. The bright sunlight and still trees make the yard feel like a calm summer day in a residential area.",
+            "zh": "视频一开始看到的是一栋白色房子的侧面，有个白色车库门，靠近车道的外墙板上装着仪表。小路从车库延伸出来，旁边有一堵红砖砌的低矮挡土墙，和房子平行，墙后是一小块长着杂草的绿地。一楼窗户两边装着绿色百叶窗，小路通向房子后面，二楼挂着一面美国国旗。接着，水泥路经过房子角落的一丛大灌木，右边大片草坪的边缘排着一圈小型太阳能灯。最后，小路延伸到大树下的阴凉处，国旗就在那儿，路尽头消失在枝叶里。阳光明亮，树木静止，整个院子给人一种住宅区夏日的宁静感。"
+      },
+      "video/showcase/manipulation/case_01_adjust_bottle.mp4": {
+            "en": "Use the left arm to pick up the hand-sized soda bottle from the table.",
+            "zh": "使用左臂从桌子上拿起手掌大小的苏打水瓶。"
+      },
+      "video/showcase/manipulation/case_02_beat_block_hammer.mp4": {
+            "en": "Use the right arm to take the medium-sized metal hammer and strike.",
+            "zh": "使用右臂拿起中等大小的金属锤并敲击方块。"
+      },
+      "video/showcase/manipulation/case_03_blocks_ranking_rgb.mp4": {
+            "en": "Start with red block on the left, add green block next to it, and then place blue block on the right.",
+            "zh": "从左侧的红色积木开始，在旁边放置绿色积木，然后将蓝色积木放到右侧。"
+      },
+      "video/showcase/manipulation/case_04_click_alarmclock.mp4": {
+            "en": "Use the left arm to click the top of the alarm-clock with buttons on side.",
+            "zh": "使用左臂点击侧面带有按钮的闹钟顶部。"
+      },
+      "video/showcase/manipulation/case_05_handover_mic.mp4": {
+            "en": "Take the microphone with white rounded head, shift it, and release it to the other side.",
+            "zh": "拿起带有白色圆形头部的麦克风，将其移动后释放到另一侧。"
+      },
+      "video/showcase/ood/hand_motion/case_01.mp4": {
+            "en": "The scene shows a refrigerated seafood display counter illuminated by four overhead pendant lights. Various raw fish and shellfish rest on crushed white ice within a glass case. In the foreground, several whole silver-blue fish are lined up. Behind them lie pinkish fish and clusters of orange shrimp. To the right, reddish crustaceans sit alongside lemon halves and green herb garnishes. A person wearing a black sleeve extends their right hand into the frame. The hand reaches over the display and targets one of the whole silver fish in the front row. The fingers grasp the selected fish firmly near its tail, lifting it slightly off the bed of ice.",
+            "zh": "画面展示了一个冷藏海鲜展示柜，四盏悬挂式顶灯照亮了柜台。玻璃柜内，各种生鲜鱼类和贝类放置在碎白冰上。前景中，几条完整的银蓝色鱼整齐排列。它们后方是粉红色的鱼和成簇的橙色虾。右侧，红褐色的甲壳类海鲜与半颗柠檬及绿色香草装饰并列摆放。一名穿着黑色袖子的人将右手伸入画面。手伸过展示柜上方，目标锁定前排的一条完整银鱼。手指在靠近鱼尾处牢牢抓住选中的鱼，将其略微抬离冰床。"
+      },
+      "video/showcase/ood/hand_motion/case_02.mp4": {
+            "en": "[Locomotion] The video begins in a bright dining and kitchen area. A dark wooden dining table fills the foreground, with a pale green table runner arranged across the center and decorated with evenly spaced light dots. A lit white candle cup rests on the runner, its base showing a transparent glass texture and its flame casting a soft reflection on the tabletop. Dark leather dining chairs surround the table, while the background reveals an open kitchen with cabinets, a kitchen island, a stainless steel refrigerator, and a large bright window on the right. As the video continues, the camera moves smoothly across the dining-table area. The chair backs and table edge shift gradually in the frame, while the relative layout of the kitchen island, stove area, and refrigerator remains stable. Strong natural light from the window continues to illuminate the scene, and the tabletop reflections, candle flame, and background furniture show no abrupt jumps. Finally, the camera reaches a closer view of the tabletop and candle, with the dining and kitchen space still clean and bright, the candle cup steady on the runner, and the surrounding chairs and kitchen structure remaining consistent.\n[Hand Motion/Manipulation] A realistic right hand enters from the lower-right side of the frame, with the wrist and forearm moving toward the lit candle cup on the dining table. The palm first approaches the side of the cup, then the fingers curl naturally around the glass wall while the thumb supports it from the opposite side. After the grasp is formed, the hand lifts the candle cup from the green table runner, separating the base from the tabletop and bringing the cup gradually closer to the foreground. During the lift, the hand posture remains stable, the number of fingers and joint shapes stay natural, and the candle and flame remain inside the cup without extra fingers or additional hands appearing. Finally, the hand holds the candle cup steadily, while the dining table, chair backs, kitchen island, and window light remain unchanged in the background, keeping the action clearly focused on picking up the lit candle cup.",
+            "zh": "[Locomotion] 视频开始于一间明亮的餐厨空间，前景是一张深色木质餐桌，桌面中央铺着浅绿色桌旗，上面整齐排列着浅色圆点图案。桌旗上放着一个点燃的白色蜡烛杯，蜡烛杯底部带有透明玻璃质感，烛光在桌面上形成柔和反射。深色皮质餐椅围绕餐桌摆放，后方可见开放式厨房、橱柜、厨房岛台、不锈钢冰箱以及右侧明亮的大窗户。随着视频继续，镜头沿餐桌区域平滑移动，餐椅靠背和桌面边缘在画面中逐渐发生位移，厨房岛台、灶台和冰箱的相对布局保持稳定。窗边强烈的自然光持续照亮场景，桌面反光、蜡烛火焰和背景家具没有突兀跳变。最后，镜头来到更靠近桌面和蜡烛的位置，餐厨空间仍然保持整洁明亮，蜡烛杯稳定地位于桌旗上，周围椅子和厨房结构保持一致。\n[Hand Motion/Manipulation] 一只真实的右手从画面右下方进入，手腕和前臂朝向餐桌上的点燃蜡烛杯移动。手掌先靠近杯身侧面，手指随后自然弯曲并包住玻璃杯外壁，拇指在另一侧提供支撑。抓握形成后，手将蜡烛杯从绿色桌旗上抬起，使杯底离开桌面并逐渐靠近画面前景。抬起过程中，手部姿态保持稳定，手指数量和关节形态自然，杯中的蜡烛和火焰仍然保持在杯内，没有出现额外手指或多余手部。最后，手稳稳握住蜡烛杯，背景中的餐桌、椅背、厨房岛台和窗边光线保持不变，动作重点清晰地集中在拿起点燃蜡烛杯上。"
+      },
+      "video/showcase/ood/hand_motion/case_03.mp4": {
+            "en": "[Locomotion] The video begins beside a sunlit kitchen window. The left side shows the edge of a stainless steel refrigerator and a green plant in a brown pot, while a light wooden countertop and black gas stove grates fill the foreground. Near the window, a lit white pillar candle stands on a reddish-brown circular holder, its flame flickering slightly in the bright natural light. Outside the window, blue sky, white clouds, green tree canopies, and a warm-toned wall are visible, giving the scene a fresh and bright atmosphere. As the video progresses, the camera moves smoothly along the counter and window area. The refrigerator on the left gradually moves out of view, while the window frame, trees, stove grates, and candle shift continuously in their relative positions. The outdoor foliage and sky remain stable, and the countertop, stove grates, and candle holder do not jump or drift. Then, the view becomes more centered on the windowside counter, making the candle flame, holder, and stove edge clearer while the warm lighting remains consistent. Finally, the frame settles between the candle and the outdoor view, with the spatial relationship of the kitchen objects remaining stable and demonstrating indoor-outdoor consistency under camera motion.\n[Hand Motion/Manipulation] A realistic human hand enters from the left side of the frame and reaches along the counter toward the lit white pillar candle near the window. After the palm approaches the candle, the fingers naturally close around the candle body while the thumb supports it from the opposite side, grasping the lower-middle portion of the wax and avoiding the flame. The hand then lifts the candle vertically from the reddish-brown circular holder, clearly separating the candle base from the holder while the holder remains in its original position on the countertop. During the lift, the wrist and fingers stay stable, the candle remains upright, and the flame stays visible without extra hands, deformed fingers, or object interpenetration. Finally, the hand raises the lit candle to a higher position in front of the window, while the reddish-brown holder, black stove grates, plant, and outdoor trees remain stationary, completing the action of grasping and lifting the candle.",
+            "zh": "[Locomotion] 视频开始于阳光充足的厨房窗边，画面左侧可见不锈钢冰箱边缘和一个棕色花盆中的绿色植物，前方是浅色木质台面和黑色燃气灶架。台面靠近窗边的位置放着一支点燃的白色柱状蜡烛，蜡烛立在红棕色圆形底座上，火焰在明亮自然光中轻微摇曳。窗外可以看到蓝天、白云、绿色树冠和远处的暖色墙面，整体环境清爽明亮。随着视频播放，镜头沿台面和窗户方向平滑移动，左侧冰箱逐渐离开画面，窗框、树木、灶具和蜡烛在画面中的相对位置连续变化。室外树叶和天空保持稳定，台面、燃气灶架和蜡烛底座没有跳动或漂移。随后，镜头更集中于窗边台面区域，烛光、底座和灶具边缘更加清楚，光照仍然保持温暖且一致。最后，画面停留在蜡烛和窗外景观之间，厨房物体的结构关系保持稳定，体现出相机运动下室内外空间的一致性。\n[Hand Motion/Manipulation] 一只真实的人手从画面左侧进入，沿着台面方向伸向窗边点燃的白色柱状蜡烛。手掌靠近蜡烛后，手指围绕蜡烛主体自然收拢，拇指在另一侧辅助固定，抓握位置避开火焰并集中在蜡柱中下部。随后，手将蜡烛从红棕色圆形底座上竖直提起，使蜡烛底部清楚地离开底座，而底座仍留在台面原处。抬起过程中，手腕和手指保持稳定，蜡烛始终竖直，火焰仍然可见，没有额外手部、手指变形或物体穿插。最后，手将点燃的蜡烛举到窗前更高的位置，红棕色底座、黑色灶架、绿植和窗外树木保持静止，动作完整表现为抓住并提起蜡烛。"
+      },
+      "video/showcase/ood/hand_motion/case_04.mp4": {
+            "en": "[Locomotion] The video begins with a modern desk setup against a red textured wall, with a large bright window on the right showing a faint view of city buildings and sky. The tabletop has a dark wood-grain surface. A large green plant and a white cup sit on the left, a red-covered notebook lies near the center, and an open laptop sits nearby with its screen and keyboard facing forward. A pencil holder with several pencils or brushes stands toward the back of the desk. As the video continues, the camera moves smoothly along the tabletop. The plant, cup, red notebook, and laptop shift gradually in the frame, while the red wall texture, window light, and distant city view remain continuous and stable. The desktop shadows and object edges do not jump, and the distances and arrangement among the office items remain plausible. Then, the view moves closer to the red notebook and laptop area, making the pen on the tabletop more prominent. Finally, the camera settles near the right side of the desk, with the plant, cup, pencil holder, notebook, and laptop still fixed in place, forming a stable workspace scene.\n[Hand Motion/Manipulation] A realistic right hand enters from the right side of the frame, with the wrist reaching toward the pen beside the red notebook. After the palm approaches the tabletop, the thumb and index finger open naturally and align with the pen body, while the middle finger supports from below. The fingers then pinch the pen and lift it from the tabletop, separating the pen tip and body from the surface near the notebook. The hand continues raising the pen in front of the laptop, holding it steadily between the fingers with natural joints and a correct number of fingers, without extra hands or additional fingers appearing. Throughout the action, the red notebook, white cup, green plant, pencil holder, and laptop remain in their original positions, and the red wall and window light stay stable in the background. Finally, the hand holds the pen in the right foreground, clearly completing the action of picking up the pen from the desk.",
+            "zh": "[Locomotion] 视频开始展示一张现代办公桌，背景是一面红色纹理墙，右侧有一扇明亮的大窗户，窗外隐约可见城市建筑和天空。桌面采用深色木纹材质，左侧摆放着大型绿植和一个白色杯子，中间有一本红色封面的笔记本，旁边放着打开的笔记本电脑，屏幕和键盘朝向前方。桌面后侧还有一个笔筒，里面插着多支铅笔或画笔。随着视频继续，镜头沿桌面平滑移动，绿植、杯子、红色笔记本和电脑在画面中逐渐发生相对位移，红色墙面的纹理、窗边光线和远处城市景色保持连续稳定。桌面阴影和物体边缘没有明显跳变，办公用品之间的距离和摆放关系始终合理。随后，画面更靠近红色笔记本和电脑区域，桌面上的钢笔变得更显眼。最后，镜头停留在办公桌右侧附近，绿植、杯子、笔筒、笔记本和电脑仍保持原位，形成一个稳定的桌面工作场景。\n[Hand Motion/Manipulation] 一只真实的右手从画面右侧进入，手腕伸向红色笔记本旁边的钢笔。手掌靠近桌面后，拇指和食指自然张开并对准笔身，中指在下方辅助支撑。随后，手指捏住钢笔，将其从桌面上拿起，使笔尖和笔身离开笔记本附近的表面。手继续将钢笔抬到笔记本电脑前方，保持钢笔在指间稳定夹持，手部关节和手指数量自然，没有出现额外手指或多余手部。整个动作中，红色笔记本、白色杯子、绿植、笔筒和笔记本电脑都保持在原来的位置，背景红墙和窗边光线稳定。最后，手举着钢笔停在画面右侧前景，动作清楚地表现为从办公桌上拿起钢笔。"
+      },
+      "video/showcase/ood/hand_motion/case_05.mp4": {
+            "en": "A vast winter landscape features towering snow covered mountains flanking a central valley under an overcast grey sky. The foreground consists of a flat, frozen expanse of ice or snow stretching toward the base of the slopes. Dark evergreen trees dot the lower elevations of the rocky mountain faces. The environment appears cold and still with no other people visible in the distance. Initially, the view is unobstructed, but then the wearer raises both hands into the frame wearing a bright orange long sleeved jacket. The fingers curve inward to form a heart shape centered against the distant mountain valley. The hands hold this gesture steadily for the remainder of the segment, framing the scenic view within the heart made by the thumbs and index fingers.",
+            "zh": "广阔的冬季景观中，高耸的雪山在阴沉的灰色天空下夹峙着中央山谷。前景是一片平坦的冰冻冰面或雪地，一直延伸至山坡底部。深色的常青树点缀在岩石山体的低海拔处。环境显得寒冷而静谧，远处不见他人踪影。起初视野开阔无阻，随后身穿亮橙色长袖夹克的佩戴者将双手举入画面。手指向内弯曲形成心形，对准远处的山谷中央。双手稳定保持这一手势直至片段结束，用拇指和食指构成的心形将这片景色框在其中。"
+      },
+      "video/showcase/ood/hand_motion/case_06.mp4": {
+            "en": "The setting is an outdoor grassy field with tall green vegetation. A large tiger with orange fur and black stripes lies in the grass, facing the camera. The animal appears calm and stationary. Bright natural light highlights the texture of the grass and the coat. A human hand enters from the left and reaches toward the tiger. The hand gently places itself on the top of the head, resting between the ears. The fingers spread slightly as the hand strokes the fur on the forehead. The hand remains in contact with the animal's head throughout the sequence, maintaining a gentle touch while the tiger stays still.",
+            "zh": "场景是一片户外草地，生长着高大的绿色植被。一只体型硕大的老虎卧在草丛中，面向镜头，它有着橙色的皮毛和黑色的条纹。这只动物显得平静且静止不动。明亮的自然光线突显了草丛和皮毛的质感。一只手从左侧入画，伸向老虎。手轻轻落在头顶，置于双耳之间。手指微微张开，轻抚额头上的皮毛。在整个片段中，手始终与动物的头部保持接触，动作轻柔，而老虎则保持静止。"
+      },
+      "video/showcase/ood/locomotion/case_01_aquatic_landscape.mp4": {
+            "en": "The video begins with a calm lake reflecting the towering, rocky mountains that rise sharply in the background, where a wooden cabin rests on the shore to the right nestled among tall evergreen trees covering the lower slopes. As the sequence continues, thick white clouds hang low over the mountain peaks, drifting slowly across the rugged stone face while soft light touches the upper ridges. Then, the dark branches of foreground trees on the left and right sides stand steady above the water, framing the distant church spire visible near the treeline. Finally, the cabin sits fixed on its wooden platform over the water, surrounded by the quiet forest and the massive mountain range. It feels still and quiet because the water is smooth, the clouds are low, and the trees are not shaking.",
+            "zh": "视频开始时，平静的湖面倒映着背景中陡峭耸立的岩石高山。右侧岸边有一座木屋，藏在覆盖低坡的高大常青树丛里。接着，厚重的白云低悬在山峰上方，缓缓飘过崎岖的石壁，柔和的光线照在上部山脊上。然后，左右两侧前景树的深色树枝稳稳地伸在水面上方，框住了树线附近可见的远处教堂尖顶。最后，木屋固定在水面上的木制平台上，被寂静的森林和巨大的山脉环绕。整体感觉静止而安宁，因为水面平滑，云层很低，树木也没有摇晃。"
+      },
+      "video/showcase/ood/locomotion/case_02.mp4": {
+            "en": "The scene begins with a clear view of multiple glowing DNA double helix structures floating in a dark blue space, their strands composed of connected purple and blue nodes that shimmer under soft ambient lighting. As the sequence continues, the distinct spiral shapes start to drift and lose their sharp definition, blending into the surrounding environment filled with out-of-focus bokeh lights and scattered particles. Then, the solid structures dissolve further, leaving behind a field of shimmering dots that hang in the dark space while the light sources on the left cast a bright haze over the scene. Finally, the helix forms disappear completely, replaced by a collection of drifting light fragments and colorful specks suspended in the deep blue background. The glowing particles against the dark background make the scene look like little lights floating in a dark space.",
+            "zh": "画面一开始，能清楚看到多个发光的 DNA 双螺旋结构漂浮在深蓝色空间中。这些螺旋链由相连的紫色和蓝色节点构成，在柔和的环境光下微微闪烁。随着画面继续，清晰的螺旋形状开始漂移，轮廓变得不再锐利，逐渐融入周围环境中，背景里充满了失焦的光斑和散落的粒子。接着，实体结构进一步消散，只剩下一片闪烁的光点悬浮在黑暗空间里。左侧的光源投下一层明亮的雾气，让画面显得有些模糊。最后，螺旋形状完全消失，取而代之的是漂浮的光碎片和彩色斑点，悬浮在深蓝色背景中。深色背景下的发光粒子，让整个画面看起来就像黑暗空间里漂浮的小光点。"
+      },
+      "video/showcase/ood/locomotion/case_03_indoor_dining_spaces.mp4": {
+            "en": "The video begins with a view of a modern kitchen featuring a large central island with a glossy green countertop and three stools tucked underneath. To the right, a stainless steel refrigerator stands next to a range hood, while large windows along the back and left walls reveal dense green trees outside. As the sequence continues, more of the left side of the room comes into view, bringing a secondary counter with a sink into clearer focus while the refrigerator gradually moves out of sight. Then, the sunlight streaming through the glass panes casts bright reflections on the polished island surface and illuminates the wooden floor. The pendant lights hang stationary above the island throughout the sequence. Finally, the open space near the glass doors becomes the main focus, highlighting the connection between the interior and the bright foliage outside. The empty stools and sunlight on the floor make the kitchen feel quiet and still.",
+            "zh": "视频开始时展示了一个现代厨房，中间有个大岛台，台面是光亮的绿色，下面收着三把凳子。右边是一台不锈钢冰箱，挨着抽油烟机，后墙和左墙的大窗户外面能看到茂密的绿树。随着视频继续，房间左侧更多部分显现出来，另一处带水槽的操作台看得更清楚了，冰箱则逐渐看不见了。阳光透过玻璃窗照进来，在光亮的岛台表面形成明亮的反光，也照亮了木地板。整个视频中，岛台上方的吊灯一直静止悬挂着。最后，玻璃门附近的空旷区域成为重点，突出了室内与室外明亮绿植的联系。空着的凳子和地板上的阳光，让厨房显得很安静。"
+      },
+      "video/showcase/ood/locomotion/case_04_indoor_passageways.mp4": {
+            "en": "The video begins with a full view down a long, deteriorating hallway characterized by peeling beige walls and significant structural damage, where cracks run vertically down the surfaces and across the ceiling. Patches of plaster are missing from the ceiling, and white debris litters the floor between the yellow tiled wainscoting that lines the lower walls. Red doors with glass panes stand at the far end and on either side of the foreground, contrasting with the muted tones of the decay, while a red patterned armchair sits near the left wall. As the sequence progresses, the left side of the hallway becomes more prominent, bringing the nearest left door and the armchair into greater focus while the right side fades from view. The details of the crumbling plaster and exposed lines on the left wall become clearer, showing deep fissures that stretch from the ceiling to the floor, while the door at the far end remains visible in the distance. Finally, the scene settles with the left wall and door occupying the majority of the foreground, highlighting the extent of the decay along this side of the building. The even light and the pieces of plaster on the floor make the hallway look quiet and abandoned, like a building that has been closed up for a long time.",
+            "zh": "视频开始时，画面展现了一条漫长破败走廊的全景。米色墙壁墙皮剥落，结构损坏严重，墙面和天花板上都有垂直的裂缝。天花板上缺了一块块灰泥，白色碎片散落在地板上，位于下半墙面的黄色瓷砖墙裙之间。远处和前景两侧都有带玻璃窗的红色门，与破败环境的暗淡色调形成对比，左墙边放着一把红色花纹扶手椅。随后，走廊左侧变得更突出，最近的左门和扶手椅更加清晰，右侧则逐渐看不太清了。左墙上剥落灰泥和裸露纹路的细节变得更清楚，显示出从天花板延伸到地板的深裂缝，远处的门依然可见。最后，画面稳定下来，左墙和门占据了前景的大部分，突出了这一侧建筑的破败程度。均匀的光线和地板上的灰泥碎片让走廊看起来安静且被遗弃，就像一座封闭已久的建筑。"
+      },
+      "video/showcase/ood/locomotion/case_05_terrestrial_landscape.mp4": {
+            "en": "The video begins with a view of a brown wooden structure on the right side, positioned next to a forest of blocky pine trees topped with snow under a blue sky with scattered clouds. As the sequence progresses, the scene displays more of the dense evergreen forest in the foreground, while the large mountains in the background catch the sunlight on their rocky peaks. Then, the wooden building is visible only on the extreme edge of the view, allowing the tall trees and the rugged mountain range to dominate the scene. Finally, the sun glares brightly from the upper left over the mountain ridge, casting light across the snowy landscape while the wooden structure remains barely visible on the side. The sun shining on the snow and the quiet trees make the place look cold and calm.",
+            "zh": "视频一开始，画面右侧有个棕色木制建筑，旁边是一片方块状的松树林，树顶覆盖着积雪，天空湛蓝，飘着几朵云。随着视频继续，前景呈现出更多茂密的常绿森林，背景里的大山岩石峰顶照到了阳光。之后，木制建筑只在画面最边缘露出一点，高大的树木和崎岖的山脉占据了大部分画面。最后，太阳从左上方的山脊后明亮地照射出来，光线洒在雪地上，木制建筑在旁边几乎看不见了。阳光照在雪地上，加上安静的树木，让这个地方看起来寒冷而平静。"
+      },
+      "video/showcase/ood/locomotion/case_06_verdant_landscape.mp4": {
+            "en": "The video begins with a watercolor painting of a white building with a tall tower standing near a calm body of water, framed by dark pine trees and misty mountains in the background under soft, diffuse light. As the sequence progresses, the composition changes to show more of the large, dark pine branches hanging over the water on the left, while the building and tower occupy the right side. Then, the reflection of the structure in the water becomes less central as the foreground foliage takes up more space. Finally, the scene displays mostly the heavy pine branches and the open water with the mountain faintly visible in the distance. The lack of motion in the water and the soft gray tones make the scene look calm and quiet.",
+            "zh": "视频开头是一幅水彩画，画里有一座带高塔的白色建筑，立在平静的水边，周围围着深色松树，背景的山上有雾气，让画面显得模糊，光线柔和均匀。随后，画面布局发生变化，左侧垂在水面上的深色松树枝变多了，建筑和塔位于右侧。接着，水中建筑的倒影不再那么居中，前景的枝叶占据了更多空间。最后，画面里主要是茂密的松树枝和开阔的水面，远处的山隐约可见。水面没有波动，加上柔和的灰色调，让场景看起来平静安宁。"
+      },
+      "video/showcase/ood/manipulation/case_01.mp4": {
+            "en": "Use the robotic arm to pick up the white cylindrical container with a wooden lid from the front of the table. The gripper approaches from above, clamps the upper part of the container, and lifts it steadily away from the round coaster and tabletop.",
+            "zh": "使用机械臂从桌面前方抓起带有木制盖子的白色圆柱容器。机械夹爪从上方靠近容器，夹住容器上部后将其稳定抬起，使容器离开圆形垫片和桌面。"
+      },
+      "video/showcase/ood/manipulation/case_02.mp4": {
+            "en": "Use the robotic arm to grasp the potted plant on the left side of the table. The gripper reaches toward the plant and pot, clamps the upper part of the pot, and lifts the potted plant steadily from the tabletop.",
+            "zh": "使用机械臂抓起桌面左侧的盆栽花盆。机械夹爪伸向植物和花盆，夹住花盆上部后将盆栽从桌面稳定抬起。"
+      },
+      "video/showcase/ood/manipulation/case_03.mp4": {
+            "en": "Use the robotic arm to pick up the notebook on the table. The gripper approaches from above, clamps the edge of the notebook, lifts it from the tabletop, and maintains a stable grasp.",
+            "zh": "使用机械臂抓起桌面上的记事本。机械夹爪从上方靠近记事本，夹住其边缘后将其从桌面抬起，并保持稳定抓握。"
+      },
+      "video/showcase/ood/manipulation/case_04.mp4": {
+            "en": "Use the robotic arm to pick up the pen on the right side of the table. The gripper approaches the pen from the right, clamps the pen body, and lifts it from the tabletop.",
+            "zh": "使用机械臂抓起桌面右侧的钢笔。机械夹爪从右侧靠近钢笔，夹住笔身后将其从桌面上拿起。"
+      },
+      "video/showcase/ood/manipulation/case_05.mp4": {
+            "en": "Use the robotic arm to gently tap the laptop keyboard. The gripper moves above the keyboard, presses down on one key, and lifts back up while keeping the motion gentle and controlled.",
+            "zh": "使用机械臂轻轻敲击笔记本电脑的键盘。机械夹爪移动到键盘上方，向下按压一个按键后抬起，保持动作轻柔且受控。"
+      },
+      "video/showcase/ood/manipulation/case_06.mp4": {
+            "en": "Use the robotic arm to pick up the blue earbud case on the desk. The gripper approaches from above, clamps the case body, lifts it from the tabletop, and holds it steadily.",
+            "zh": "使用机械臂抓起桌面上的蓝色耳机盒。机械夹爪从上方靠近耳机盒，夹住盒身后将其从桌面抬起，并保持稳定拿取。"
+      }
+};
+
     const SHOWCASE_GROUPS = [
       {
         title: "Locomotion",
         reverse: false,
         items: [
-          { title: "Locomotion Demo 1", prompt: "Trajectory-conditioned ego-camera motion in indoor scene.", video: "video/locomotion_show/7b98c08a1cb42da7_batch002_2_3_3_camera.mp4" },
-          { title: "Locomotion Demo 2", prompt: "Long-horizon navigation with stable temporal consistency.", video: "video/locomotion_show/VLNENV26_x-146.394_y1605.316_z299.995_1_0_8_camera.mp4" },
-          { title: "Locomotion Demo 3", prompt: "Complex environment camera control under locomotion input.", video: "video/locomotion_show/VLNENV21_x-4.686_y11.679_z-4.292_1_0_6_camera.mp4" },
-          { title: "Locomotion Demo 4", prompt: "Outdoor-like viewpoint transition with smooth dynamics.", video: "video/locomotion_show/VLNENV14_x3.135_y27.596_z-6.500_1_7_0_camera.mp4" },
-          { title: "Locomotion Demo 5", prompt: "Trajectory following with robust scene appearance retention.", video: "video/locomotion_show/00e7f68556c9ec9a_batch001_1_3_0_camera.mp4" }
+          { title: "Locomotion Demo 1", prompt: "Trajectory-conditioned ego-camera motion in terrestrial landscape.", video: "video/showcase/locomotion/case_01_terrestrial_landscape.mp4" },
+          { title: "Locomotion Demo 2", prompt: "Long-horizon navigation with stable temporal consistency.", video: "video/showcase/locomotion/case_02_locomotion.mp4" },
+          { title: "Locomotion Demo 3", prompt: "Complex environment camera control under locomotion input.", video: "video/showcase/locomotion/case_03_locomotion.mp4" },
+          { title: "Locomotion Demo 4", prompt: "Outdoor-like viewpoint transition with smooth dynamics.", video: "video/showcase/locomotion/case_04_locomotion.mp4" },
+          { title: "Locomotion Demo 5", prompt: "Trajectory following with robust scene appearance retention.", video: "video/showcase/locomotion/case_05_locomotion.mp4" },
+          { title: "Locomotion Demo 6", prompt: "Labeled locomotion sample with camera-conditioned world motion.", video: "video/showcase/locomotion/case_06_locomotion.mp4" }
         ]
       },
       {
         title: "Manipulation",
         reverse: true,
         items: [
-          { title: "Manipulation Demo 1", prompt: "Adjust bottle task with detailed hand-object interaction.", video: "video/manipulation_show/0004_adjust_bottle_train_joint_720p_fixed_scene_task_720new_ds3_episode43.mp4" },
-          { title: "Manipulation Demo 2", prompt: "Beat block with hammer while preserving action continuity.", video: "video/manipulation_show/0033_beat_block_hammer_train_joint_720p_wzl_ds3_episode50.mp4" },
-          { title: "Manipulation Demo 3", prompt: "Block ranking sequence under RGB condition.", video: "video/manipulation_show/0054_blocks_ranking_rgb_train_joint_720p_wzl_ds3_episode0.mp4" },
-          { title: "Manipulation Demo 4", prompt: "Click interaction task with fine-grained motion control.", video: "video/manipulation_show/0083_click_alarmclock_train_joint_720p_fixed_scene_task_720new_ds3_episode42.mp4" },
-          { title: "Manipulation Demo 5", prompt: "Handover task showing coherent object transfer behavior.", video: "video/manipulation_show/0182_handover_mic_train_joint_720p_fixed_scene_task_720new_ds3_episode20.mp4" }
+          { title: "Manipulation Demo 1", prompt: "Adjust bottle task with detailed hand-object interaction.", video: "video/showcase/manipulation/case_01_adjust_bottle.mp4" },
+          { title: "Manipulation Demo 2", prompt: "Beat block with hammer while preserving action continuity.", video: "video/showcase/manipulation/case_02_beat_block_hammer.mp4" },
+          { title: "Manipulation Demo 3", prompt: "Block ranking sequence under RGB condition.", video: "video/showcase/manipulation/case_03_blocks_ranking_rgb.mp4" },
+          { title: "Manipulation Demo 4", prompt: "Click interaction task with fine-grained motion control.", video: "video/showcase/manipulation/case_04_click_alarmclock.mp4" },
+          { title: "Manipulation Demo 5", prompt: "Handover task showing coherent object transfer behavior.", video: "video/showcase/manipulation/case_05_handover_mic.mp4" }
         ]
       },
       {
         title: "Hand Motion",
         reverse: false,
         items: [
-          { title: "Hand Motion Demo 1", prompt: "A bed with a purple sheet and a pink blanket draped over the headboard, featuring several stacked bowls in shades of blue and green arranged on the bed surface.", video: "video/handmotion_show/6.mp4" },
-          { title: "Hand Motion Demo 2", prompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.", video: "video/handmotion_show/12.mp4" },
-          { title: "Hand Motion Demo 3", prompt: "A small, enclosed space with a bed covered in a dark blue sheet and a light pink fabric draped over the headboard. Two white, rectangular boxes sit on the bed, one slightly larger than the other.", video: "video/handmotion_show/15.mp4" },
-          { title: "Hand Motion Demo 4", prompt: "A yellow table with a red plastic cup, a purple grape-shaped toy, an orange triangular piece, a small transparent object, and a yellow duck-shaped toy, all positioned near a brown curtain backdrop.", video: "video/handmotion_show/34.mp4" },
-          { title: "Hand Motion Demo 5", prompt: "A plain orange shirt lies flat on a yellow floor, positioned near a corner with beige walls. A white lint roller rests on the shirt, partially covering its surface.", video: "video/handmotion_show/63.mp4" }
+          { title: "Hand Motion Demo 1", prompt: "A bed with a purple sheet and a pink blanket draped over the headboard, featuring several stacked bowls in shades of blue and green arranged on the bed surface.", video: "video/showcase/hand_motion/case_01_bed_bowls.mp4" },
+          { title: "Hand Motion Demo 2", prompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.", video: "video/showcase/hand_motion/case_02_bed_air_purifier.mp4" },
+          { title: "Hand Motion Demo 3", prompt: "A small, enclosed space with a bed covered in a dark blue sheet and a light pink fabric draped over the headboard. Two white, rectangular boxes sit on the bed, one slightly larger than the other.", video: "video/showcase/hand_motion/case_03_bed_boxes.mp4" },
+          { title: "Hand Motion Demo 4", prompt: "A yellow table with a red plastic cup, a purple grape-shaped toy, an orange triangular piece, a small transparent object, and a yellow duck-shaped toy, all positioned near a brown curtain backdrop.", video: "video/showcase/hand_motion/case_04_table_toys.mp4" },
+          { title: "Hand Motion Demo 5", prompt: "A plain orange shirt lies flat on a yellow floor, positioned near a corner with beige walls. A white lint roller rests on the shirt, partially covering its surface.", video: "video/showcase/hand_motion/case_05_shirt_lint_roller.mp4" }
         ]
       },
       {
-        title: "Single Arm Manipulation",
+        title: "libero",
         reverse: false,
         items: [
-          { title: "Single Arm Demo 1", prompt: "Put the wine bottle on top of the cabinet.", video: "video/manipulation_single_arm/000_put_the_wine_bottle_on_top_of_the_cabinet__episode47.mp4" },
-          { title: "Single Arm Demo 2", prompt: "Put the cream cheese in the bowl.", video: "video/manipulation_single_arm/001_put_the_cream_cheese_in_the_bowl__episode41.mp4" },
-          { title: "Single Arm Demo 3", prompt: "Put the wine bottle on top of the cabinet.", video: "video/manipulation_single_arm/002_put_the_wine_bottle_on_top_of_the_cabinet__episode42.mp4" },
-          { title: "Single Arm Demo 4", prompt: "Put the wine bottle on the rack.", video: "video/manipulation_single_arm/003_put_the_wine_bottle_on_the_rack__episode40.mp4" },
-          { title: "Single Arm Demo 5", prompt: "Put the wine bottle on the rack.", video: "video/manipulation_single_arm/004_put_the_wine_bottle_on_the_rack__episode46.mp4" }
+          { title: "libero Demo 1", prompt: "Put the wine bottle on top of the cabinet.", video: "video/showcase/libero/case_01_wine_bottle_cabinet.mp4" },
+          { title: "libero Demo 2", prompt: "Put the cream cheese in the bowl.", video: "video/showcase/libero/case_02_cream_cheese_bowl.mp4" },
+          { title: "libero Demo 3", prompt: "Put the wine bottle on top of the cabinet.", video: "video/showcase/libero/case_03_wine_bottle_cabinet.mp4" },
+          { title: "libero Demo 4", prompt: "Put the wine bottle on the rack.", video: "video/showcase/libero/case_04_wine_bottle_rack.mp4" },
+          { title: "libero Demo 5", prompt: "Put the wine bottle on the rack.", video: "video/showcase/libero/case_05_wine_bottle_rack.mp4" }
+        ]
+      },
+    ];
+    const LOCO_HAND_MANIPULATION_GROUPS = [
+      {
+        title: "Loco-Hand Motion/Manipulation",
+        reverse: true,
+        items: [
+          { title: "Joint Demo 1", prompt: "A realistic right hand enters the frame, reaches to the pillow, wraps the fingers around it, lifts it slightly, and holds it steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/loco_hand_motion_manipulation/case_01_pick_pillow.mp4" },
+          { title: "Joint Demo 2", prompt: "Both realistic human hands enter the frame and form a clear heart gesture with the thumbs and index fingers, then hold the heart pose steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/loco_hand_motion_manipulation/case_02_heart_gesture.mp4" },
+          { title: "Joint Demo 3", prompt: "A realistic right hand enters the frame and makes a clear V-shaped ye / peace sign with the index and middle fingers raised, then holds the gesture steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/loco_hand_motion_manipulation/case_03_peace_sign.mp4" },
+          { title: "Joint Demo 4", prompt: "Both realistic human hands enter the frame and press the palms together vertically in a prayer gesture, fingers pointing upward, then hold the pose. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/loco_hand_motion_manipulation/case_04_prayer_gesture.mp4" },
+          { title: "Joint Demo 5", prompt: "A realistic left hand enters the frame, reaches toward the teddy bear, closes the fingers around the soft toy, lifts it slightly, and holds it securely. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/loco_hand_motion_manipulation/case_05_grab_bear.mp4" },
+          { title: "Joint Demo 6", prompt: "Locomotion-conditioned manipulation in a stylized outdoor verdant landscape with a front-right camera trajectory and arm control.", video: "video/loco_hand_motion_manipulation/case_06_outdoor_arm_control.mp4" },
+          { title: "Joint Demo 7", prompt: "Locomotion-conditioned manipulation in a photorealistic indoor dining space with a front-forward camera trajectory and arm control.", video: "video/loco_hand_motion_manipulation/case_07_indoor_arm_control.mp4" }
+        ]
+      }
+    ];
+    const OOD_GROUPS = [
+      {
+        title: "Locomotion",
+        reverse: false,
+        items: [
+          { title: "Locomotion Demo 1", prompt: "Out-of-distribution locomotion evaluation sample.", video: "video/showcase/ood/locomotion/case_01_aquatic_landscape.mp4" },
+          { title: "Locomotion Demo 2", prompt: "Out-of-distribution locomotion evaluation sample.", video: "video/showcase/ood/locomotion/case_02.mp4" },
+          { title: "Locomotion Demo 3", prompt: "Out-of-distribution locomotion evaluation sample.", video: "video/showcase/ood/locomotion/case_03_indoor_dining_spaces.mp4" },
+          { title: "Locomotion Demo 4", prompt: "Out-of-distribution locomotion evaluation sample.", video: "video/showcase/ood/locomotion/case_04_indoor_passageways.mp4" },
+          { title: "Locomotion Demo 5", prompt: "Out-of-distribution locomotion evaluation sample.", video: "video/showcase/ood/locomotion/case_05_terrestrial_landscape.mp4" },
+          { title: "Locomotion Demo 6", prompt: "Out-of-distribution locomotion evaluation sample.", video: "video/showcase/ood/locomotion/case_06_verdant_landscape.mp4" }
         ]
       },
       {
-        title: "Locomotion + Hand Motion",
+        title: "Manipulation",
         reverse: true,
         items: [
-          { title: "Joint Demo 1", prompt: "A realistic right hand enters the frame, reaches to the flower vase on the table, wraps the fingers around the vase body, lifts the vase slightly, and holds it steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_01_pick_pillow_stitched_with_pose.mp4" },
-          { title: "Joint Demo 2", prompt: "Both realistic human hands enter the frame and form a clear heart gesture with the thumbs and index fingers, then hold the heart pose steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_02_heart_stitched_with_pose.mp4" },
-          { title: "Joint Demo 3", prompt: "A realistic right hand enters the frame and makes a clear V-shaped ye / peace sign with the index and middle fingers raised, then holds the gesture steadily. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_04_peace_ye_stitched_with_pose.mp4" },
-          { title: "Joint Demo 4", prompt: "Both realistic human hands enter the frame and press the palms together vertically in a prayer gesture, fingers pointing upward, then hold the pose. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_06_prayer_stitched_with_pose.mp4" },
-          { title: "Joint Demo 5", prompt: "A realistic left hand enters the frame, reaches toward the teddy bear, closes the fingers around the soft toy, lifts it slightly, and holds it securely. Follow the provided pose/action-map motion exactly. Preserve the original camera perspective, background layout, lighting, and object placement. Keep realistic human hand anatomy, avoid extra hands, avoid extra fingers, and do not add text or graphics.", video: "video/locomotion+mani/locomani_08_left_grab_bear_stitched_with_pose.mp4" }
+          { title: "Manipulation Demo 1", prompt: "Out-of-distribution manipulation evaluation sample.", video: "video/showcase/ood/manipulation/case_01.mp4" },
+          { title: "Manipulation Demo 2", prompt: "Out-of-distribution manipulation evaluation sample.", video: "video/showcase/ood/manipulation/case_02.mp4" },
+          { title: "Manipulation Demo 3", prompt: "Out-of-distribution manipulation evaluation sample.", video: "video/showcase/ood/manipulation/case_03.mp4" },
+          { title: "Manipulation Demo 4", prompt: "Out-of-distribution manipulation evaluation sample.", video: "video/showcase/ood/manipulation/case_04.mp4" },
+          { title: "Manipulation Demo 5", prompt: "Out-of-distribution manipulation evaluation sample.", video: "video/showcase/ood/manipulation/case_05.mp4" },
+          { title: "Manipulation Demo 6", prompt: "Out-of-distribution manipulation evaluation sample.", video: "video/showcase/ood/manipulation/case_06.mp4" }
         ]
       },
+      {
+        title: "Hand Motion",
+        reverse: false,
+        items: [
+          { title: "Hand Motion Demo 1", prompt: "Out-of-distribution hand-motion evaluation sample.", video: "video/showcase/ood/hand_motion/case_01.mp4" },
+          { title: "Hand Motion Demo 2", prompt: "Out-of-distribution hand-motion evaluation sample.", video: "video/showcase/ood/hand_motion/case_02.mp4" },
+          { title: "Hand Motion Demo 3", prompt: "Out-of-distribution hand-motion evaluation sample.", video: "video/showcase/ood/hand_motion/case_03.mp4" },
+          { title: "Hand Motion Demo 4", prompt: "Out-of-distribution hand-motion evaluation sample.", video: "video/showcase/ood/hand_motion/case_04.mp4" },
+          { title: "Hand Motion Demo 5", prompt: "Out-of-distribution hand-motion evaluation sample.", video: "video/showcase/ood/hand_motion/case_05.mp4" },
+          { title: "Hand Motion Demo 6", prompt: "Out-of-distribution hand-motion evaluation sample.", video: "video/showcase/ood/hand_motion/case_06.mp4" }
+        ]
+      }
     ];
     const PHYSICS_CONSISTENCY_GROUPS = [
       {
         title: "Physics Consistency",
         reverse: false,
         items: [
-          { title: "Physics Demo 1", prompt: "Physics consistency sample 1.", video: "video/Pys_cons/2432efe1b5f2034b9629ad0a83e704a2_seedance_fast.mp4" },
-          { title: "Physics Demo 2", prompt: "Physics consistency sample 2.", video: "video/Pys_cons/afbe8e839ce9ddfa185a32226299910a_seedance_fast.mp4" },
-          { title: "Physics Demo 3", prompt: "Physics consistency sample 3.", video: "video/Pys_cons/outdoor__terrestrial_landscape__018_seedance_fast.mp4" },
-          { title: "Physics Demo 4", prompt: "Physics consistency sample 4.", video: "video/Pys_cons/outdoor__verdant_landscape__053_seedance_fast.mp4" },
-          { title: "Physics Demo 5", prompt: "Physics consistency sample 5.", video: "video/Pys_cons/output.mp4" }
+          { title: "Physics Demo 1", prompt: "Physics consistency sample 1.", video: "video/physics_consistency/case_01.mp4" },
+          { title: "Physics Demo 2", prompt: "Physics consistency sample 2.", video: "video/physics_consistency/case_02_right_locomotion.mp4" },
+          { title: "Physics Demo 3", prompt: "Physics consistency sample 3.", video: "video/physics_consistency/case_03.mp4" },
+          { title: "Physics Demo 4", prompt: "Physics consistency sample 4.", video: "video/physics_consistency/case_04.mp4" },
+          { title: "Physics Demo 5", prompt: "Physics consistency sample 5.", video: "video/physics_consistency/case_05_forward_locomotion.mp4" },
+          { title: "Physics Demo 6", prompt: "Physics consistency sample 6.", video: "video/physics_consistency/case_06_terrestrial_landscape_left_locomotion.mp4" },
+          { title: "Physics Demo 7", prompt: "Physics consistency sample 7.", video: "video/physics_consistency/case_07_verdant_landscape_pan_left_locomotion.mp4" },
+          { title: "Physics Demo 8", prompt: "Physics consistency sample 8.", video: "video/physics_consistency/case_08_forward_locomotion.mp4" }
         ]
       }
     ];
@@ -726,38 +1190,30 @@
         title: "Locomotion",
         casePrompt: "",
         items: [
-          { title: "With MoE · 1", prompt: "Locomotion with/without MoE comparison case 1.", video: "video/locomotion/W_MOE/024_704e995f7c1123cd_batch002_camera_2_1_3.mp4" },
-          { title: "Without MoE · 1", prompt: "Locomotion with/without MoE comparison case 1.", video: "video/locomotion/WO_MOE/024_704e995f7c1123cd_batch002_camera_2_1_3.mp4" },
-          { title: "With MoE · 2", prompt: "Locomotion with/without MoE comparison case 2.", video: "video/locomotion/W_MOE/041_73f37a3e83b3db29_batch002_camera_1_0_2.mp4" },
-          { title: "Without MoE · 2", prompt: "Locomotion with/without MoE comparison case 2.", video: "video/locomotion/WO_MOE/041_73f37a3e83b3db29_batch002_camera_1_0_2.mp4" }
-        ]
-      },
-      {
-        title: "Locomotion",
-        casePrompt: "",
-        items: [
-          { title: "With MoE · 3", prompt: "Locomotion with/without MoE comparison case 3.", video: "video/locomotion/W_MOE/048_74c5270c0509598a_batch002_camera_1_4_0.mp4" },
-          { title: "Without MoE · 3", prompt: "Locomotion with/without MoE comparison case 3.", video: "video/locomotion/WO_MOE/048_74c5270c0509598a_batch002_camera_1_4_0.mp4" },
-          { title: "With MoE · 4", prompt: "Locomotion with/without MoE comparison case 4.", video: "video/locomotion/W_MOE/078_75e89aa83403c553_batch002_camera_1_0_0.mp4" },
-          { title: "Without MoE · 4", prompt: "Locomotion with/without MoE comparison case 4.", video: "video/locomotion/WO_MOE/078_75e89aa83403c553_batch002_camera_1_0_0.mp4" }
+          { title: "Worldscape-MoE - 1", prompt: "Locomotion Worldscape-MoE / w/o MoE comparison case 1.", video: "video/ablation/locomotion/case_01/with_moe.mp4" },
+          { title: "w/o MoE - 1", prompt: "Locomotion Worldscape-MoE / w/o MoE comparison case 1.", video: "video/ablation/locomotion/case_01/without_moe.mp4" },
+          { title: "Worldscape-MoE - 2", prompt: "Locomotion Worldscape-MoE / w/o MoE comparison case 2.", video: "video/ablation/locomotion/case_02/with_moe.mp4" },
+          { title: "w/o MoE - 2", prompt: "Locomotion Worldscape-MoE / w/o MoE comparison case 2.", video: "video/ablation/locomotion/case_02/without_moe.mp4" }
         ]
       },
       {
         title: "Manipulation",
         casePrompt: "",
         items: [
-          { title: "With MoE", prompt: "Reserved for manipulation with/without MoE comparison.", video: "" },
-          { title: "Without MoE", prompt: "Reserved for manipulation with/without MoE comparison.", video: "" }
+          { title: "Worldscape-MoE - 1", prompt: "Blocks ranking RGB manipulation Worldscape-MoE / w/o MoE comparison case 1.", video: "video/ablation/manipulation/case_01/with_moe.mp4" },
+          { title: "w/o MoE - 1", prompt: "Blocks ranking RGB manipulation Worldscape-MoE / w/o MoE comparison case 1.", video: "video/ablation/manipulation/case_01/without_moe.mp4" },
+          { title: "Worldscape-MoE - 2", prompt: "Place bread basket manipulation Worldscape-MoE / w/o MoE comparison case 2.", video: "video/ablation/manipulation/case_02/with_moe.mp4" },
+          { title: "w/o MoE - 2", prompt: "Place bread basket manipulation Worldscape-MoE / w/o MoE comparison case 2.", video: "video/ablation/manipulation/case_02/without_moe.mp4" }
         ]
       },
       {
         title: "Hand Motion",
         casePrompt: "",
         items: [
-          { title: "With MoE · 1", prompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.", video: "video/handmotion_wo/with_pose/w1_with_pose_h264.mp4" },
-          { title: "Without MoE · 1", prompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.", video: "video/handmotion_wo/with_pose/wo1_with_pose_h264.mp4" },
-          { title: "With MoE · 2", prompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.", video: "video/handmotion_wo/with_pose/w2_with_pose_h264.mp4" },
-          { title: "Without MoE · 2", prompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.", video: "video/handmotion_wo/with_pose/wo2_with_pose_h264.mp4" }
+          { title: "Worldscape-MoE - 1", prompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.", video: "video/ablation/hand_motion/case_01/with_moe.mp4" },
+          { title: "w/o MoE - 1", prompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.", video: "video/ablation/hand_motion/case_01/without_moe.mp4" },
+          { title: "Worldscape-MoE - 2", prompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.", video: "video/ablation/hand_motion/case_02/with_moe.mp4" },
+          { title: "w/o MoE - 2", prompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.", video: "video/ablation/hand_motion/case_02/without_moe.mp4" }
         ]
       }
     ];
@@ -767,20 +1223,20 @@
         title: "",
         casePrompt: "",
         items: [
-          { title: "Worldscape-MoE", video: "video/locomotion_compare/1/our/7bba3bb371d731e1_batch002_1_0_1.mp4" },
-          { title: "MatrixGame", video: "video/locomotion_compare/1/matrixgame/7bba3bb371d731e1_batch002_1_0_1.mp4" },
-          { title: "ASTRA", video: "video/locomotion_compare/1/astra/7bba3bb371d731e1_batch002_1_0_1.mp4" },
-          { title: "RealCam-I2V", video: "video/locomotion_compare/1/realcami2v/7bba3bb371d731e1_batch002_1_0_1.mp4" }
+          { title: "Worldscape-MoE", video: "video/comparison/locomotion/case_01/worldscape_moe.mp4" },
+          { title: "MatrixGame", video: "video/comparison/locomotion/case_01/matrixgame.mp4" },
+          { title: "ASTRA", video: "video/comparison/locomotion/case_01/astra.mp4" },
+          { title: "RealCam-I2V", video: "video/comparison/locomotion/case_01/realcam_i2v.mp4" }
         ]
       },
       {
         title: "",
         casePrompt: "",
         items: [
-          { title: "Worldscape-MoE", video: "video/locomotion_compare/2/our/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
-          { title: "MatrixGame", video: "video/locomotion_compare/2/m,game/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
-          { title: "CamI2V", video: "video/locomotion_compare/2/cami2v/0dd90b85c14d14dc_batch001_1_0_2.mp4" },
-          { title: "VideoX", video: "video/locomotion_compare/2/videox/0dd90b85c14d14dc_batch001_1_0_2.mp4" }
+          { title: "Worldscape-MoE", video: "video/comparison/locomotion/case_02/worldscape_moe.mp4" },
+          { title: "MatrixGame", video: "video/comparison/locomotion/case_02/matrixgame.mp4" },
+          { title: "CamI2V", video: "video/comparison/locomotion/case_02/cami2v.mp4" },
+          { title: "VideoX", video: "video/comparison/locomotion/case_02/videox.mp4" }
         ]
       }
     ];
@@ -789,39 +1245,80 @@
         title: "",
         casePrompt: "A green bedspread covers the bed, with a brown pillow at the headboard and a silver air purifier on the right side. Scattered across the bed are colorful beads, a black tape dispenser, and a blue beaded necklace.",
         items: [
-          { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/1.mp4" },
-          { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/1.mp4" },
-          { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/1.mp4" }
+          { title: "Worldscape-MoE", video: "video/comparison/hand_motion/case_01/worldscape_moe.mp4" },
+          { title: "HunyuanVideo-1.5", video: "video/comparison/hand_motion/case_01/hunyuanvideo_1_5.mp4" },
+          { title: "MimicMotion", video: "video/comparison/hand_motion/case_01/mimicmotion.mp4" }
         ]
       },
       {
         title: "",
         casePrompt: "A yellow bedspread covers the bed, with a brown curtain draped over the headboard against a beige wall. Several white dice are scattered across the bedspread near the curtain.",
         items: [
-          { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/2.mp4" },
-          { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/2.mp4" },
-          { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/2.mp4" }
+          { title: "Worldscape-MoE", video: "video/comparison/hand_motion/case_02/worldscape_moe.mp4" },
+          { title: "HunyuanVideo-1.5", video: "video/comparison/hand_motion/case_02/hunyuanvideo_1_5.mp4" },
+          { title: "MimicMotion", video: "video/comparison/hand_motion/case_02/mimicmotion.mp4" }
         ]
       },
       {
         title: "",
         casePrompt: "A green bedspread covers the bed, with a dark blue pillow at the headboard against a plain wall. A white cylindrical object with a square base sits centered on the bedspread.",
         items: [
-          { title: "Worldscape-MoE", video: "video/handmotion_compare/ours/5.mp4" },
-          { title: "HunyuanVideo-1.5", video: "video/handmotion_compare/hunyuan/5.mp4" },
-          { title: "MimicMotion", video: "video/handmotion_compare/mimicmotion/5.mp4" }
+          { title: "Worldscape-MoE", video: "video/comparison/hand_motion/case_03/worldscape_moe.mp4" },
+          { title: "HunyuanVideo-1.5", video: "video/comparison/hand_motion/case_03/hunyuanvideo_1_5.mp4" },
+          { title: "MimicMotion", video: "video/comparison/hand_motion/case_03/mimicmotion.mp4" }
         ]
       }
     ];
 
     const showcaseHost = document.getElementById("showcase-groups");
+    const oodHost = document.getElementById("ood-groups");
     const physicsConsistencyHost = document.getElementById("physics-consistency-groups");
+    const locoHandManipulationHost = document.getElementById("loco-hand-motion-manipulation-groups");
     const modal = document.getElementById("demo-modal");
     const modalVideo = document.getElementById("modal-video");
     const modalTitle = document.getElementById("modal-title");
     const modalSubtitle = document.getElementById("modal-subtitle");
-    const modalPrompt = document.getElementById("modal-prompt");
+    const modalPromptEn = document.getElementById("modal-prompt-en");
+    const modalPromptZh = document.getElementById("modal-prompt-zh");
     const closeModal = document.getElementById("close-modal");
+
+    function normalizedVideoPath(videoPath) {
+      return String(videoPath || "").replace(/^\.?\//, "");
+    }
+    function getVideoPrompt(videoPath, fallback = "") {
+      const key = normalizedVideoPath(videoPath);
+      const prompt = VIDEO_PROMPT_MAP[key];
+      return {
+        en: prompt?.en || fallback || "",
+        zh: prompt?.zh || ""
+      };
+    }
+    const PHYSICS_PREVIEW_LABELS = {
+      "video/physics_consistency/case_01.mp4": "Aurora",
+      "video/physics_consistency/case_02_right_locomotion.mp4": "Water Flow",
+      "video/physics_consistency/case_03.mp4": "Floating",
+      "video/physics_consistency/case_04.mp4": "Flame",
+      "video/physics_consistency/case_05_forward_locomotion.mp4": "Reflection",
+      "video/physics_consistency/case_06_terrestrial_landscape_left_locomotion.mp4": "Lighting",
+      "video/physics_consistency/case_07_verdant_landscape_pan_left_locomotion.mp4": "Reflection",
+      "video/physics_consistency/case_08_forward_locomotion.mp4": "Cloud Layers"
+    };
+    function promptPreview(videoPath, fallback = "") {
+      const key = normalizedVideoPath(videoPath);
+      if (PHYSICS_PREVIEW_LABELS[key]) return PHYSICS_PREVIEW_LABELS[key];
+      const prompt = getVideoPrompt(videoPath, fallback).en;
+      return prompt || fallback || "";
+    }
+    function posterForVideo(videoPath) {
+      const key = normalizedVideoPath(videoPath);
+      if (!key.startsWith("video/")) return "";
+      return key.replace(/^video\//, "video/posters/").replace(/\.mp4$/i, ".jpg");
+    }
+    function lazyVideoMarkup(videoPath) {
+      const src = normalizedVideoPath(videoPath);
+      const poster = posterForVideo(src);
+      return `<video poster="${escapeAttr(poster)}" preload="none" muted loop playsinline data-lazy-video><source data-src="${escapeAttr(src)}" type="video/mp4"></video>`;
+    }
 
     function openDemo(title, group, prompt, videoPath) {
       modalTitle.textContent = title || "Demo";
@@ -832,7 +1329,9 @@
         modalVideo.removeAttribute("src");
       }
       modalVideo.load();
-      modalPrompt.textContent = prompt;
+      const fullPrompt = getVideoPrompt(videoPath, prompt);
+      modalPromptEn.textContent = fullPrompt.en || "Prompt will be added.";
+      modalPromptZh.textContent = fullPrompt.zh || "中文提示词待补充。";
       modal.classList.remove("hidden");
       modal.classList.add("flex");
     }
@@ -871,18 +1370,19 @@
         const cards = [];
         group.items.forEach((item) => {
           if (item.video) {
+            const preview = promptPreview(item.video, item.prompt);
             cards.push(`
-              <div class="showcase-card" data-title="${group.title}" data-group="${item.title}" data-prompt="${item.prompt}" data-video="${item.video}">
-              <div class="video-shell"><video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video></div>
+              <div class="showcase-card" data-title="${escapeAttr(group.title)}" data-group="${escapeAttr(item.title)}" data-prompt="${escapeAttr(preview)}" data-video="${escapeAttr(item.video)}">
+              <div class="video-shell">${lazyVideoMarkup(item.video)}</div>
               <div class="p-4">
-                <p class="text-sm text-slate-500">${item.prompt}</p>
+                <p class="text-sm text-slate-500 prompt-preview">${escapeHtml(preview)}</p>
               </div>
               </div>
             `);
           } else {
             cards.push(`
               <div class="showcase-card">
-                <div class="showcase-placeholder"><p class="text-sm">${item.prompt}</p></div>
+                <div class="showcase-placeholder"><p class="text-sm">${escapeHtml(item.prompt)}</p></div>
               </div>
             `);
           }
@@ -898,19 +1398,158 @@
       });
     }
 
+    function configureTeaserYoutube() {
+      const teaser = document.getElementById("teaser-youtube");
+      if (!teaser) return;
+      const videoId = "8H3hJ3XDJFk";
+      const params = new URLSearchParams({
+        autoplay: "1",
+        mute: "1",
+        loop: "1",
+        playlist: videoId,
+        playsinline: "1",
+        rel: "0",
+        modestbranding: "1",
+        enablejsapi: "1",
+        vq: "hd1080"
+      });
+      if (window.location.origin && window.location.origin !== "null") {
+        params.set("origin", window.location.origin);
+      }
+      teaser.src = `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+      primeTeaserYoutube(videoId);
+    }
+
+    function revealTeaserYoutube() {
+      const teaser = document.getElementById("teaser-youtube");
+      const overlay = document.getElementById("teaser-hd-overlay");
+      if (teaser) teaser.classList.add("is-ready");
+      if (overlay) overlay.classList.add("is-hidden");
+    }
+
+    function primeTeaserYoutube(videoId) {
+      const fallbackTimer = window.setTimeout(revealTeaserYoutube, 7000);
+      window.onYouTubeIframeAPIReady = () => {
+        const player = new YT.Player("teaser-youtube", {
+          events: {
+            onReady: (event) => {
+              event.target.mute();
+              event.target.playVideo();
+              window.setTimeout(() => {
+                try {
+                  event.target.seekTo(0, true);
+                  event.target.playVideo();
+                } catch (error) {}
+                window.clearTimeout(fallbackTimer);
+                revealTeaserYoutube();
+              }, 5000);
+            },
+            onStateChange: (event) => {
+              if (event.data === YT.PlayerState.ENDED) {
+                event.target.seekTo(0, true);
+                event.target.playVideo();
+              }
+            }
+          }
+        });
+        window.teaserYoutubePlayer = player;
+      };
+      if (!document.querySelector("script[src='https://www.youtube.com/iframe_api']")) {
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+      } else if (window.YT && window.YT.Player) {
+        window.onYouTubeIframeAPIReady();
+      }
+    }
+
     function enforceAutoplay() {
-      const allVideos = document.querySelectorAll("#hero-bg-video, .showcase-card video, #modal-video");
+      const allVideos = document.querySelectorAll("#hero-bg-video");
       allVideos.forEach((video) => {
-        if (video.id !== "modal-video") {
-          video.muted = true;
-          video.defaultMuted = true;
-          video.loop = true;
-          video.autoplay = true;
-        }
+        video.muted = true;
+        video.defaultMuted = true;
+        video.loop = true;
+        video.autoplay = true;
         const playPromise = video.play();
         if (playPromise && typeof playPromise.catch === "function") {
           playPromise.catch(() => {});
         }
+      });
+    }
+
+    function initLazyVideos() {
+      const videos = Array.from(document.querySelectorAll("video[data-lazy-video]"));
+      const loadQueue = [];
+      const loading = new Set();
+      const maxConcurrentLoads = 2;
+
+      function pumpQueue() {
+        while (loading.size < maxConcurrentLoads && loadQueue.length) {
+          const video = loadQueue.shift();
+          if (!video || video.dataset.loaded === "true") continue;
+          const source = video.querySelector("source[data-src]");
+          if (!source) continue;
+          loading.add(video);
+          video.dataset.loaded = "true";
+          source.src = source.dataset.src;
+          video.load();
+          const finish = () => {
+            loading.delete(video);
+            pumpQueue();
+          };
+          video.addEventListener("loadeddata", finish, { once: true });
+          video.addEventListener("error", finish, { once: true });
+          window.setTimeout(finish, 6000);
+        }
+      }
+
+      function queueLoad(video) {
+        if (video.dataset.loaded === "true" || loadQueue.includes(video)) return;
+        loadQueue.push(video);
+        pumpQueue();
+      }
+      function unqueueLoad(video) {
+        const index = loadQueue.indexOf(video);
+        if (index >= 0) loadQueue.splice(index, 1);
+      }
+
+      const preloadObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            unqueueLoad(entry.target);
+            return;
+          }
+          queueLoad(entry.target);
+          preloadObserver.unobserve(entry.target);
+        });
+      }, { rootMargin: "350px 0px", threshold: 0.01 });
+
+      const playObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target;
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+            queueLoad(video);
+            const play = () => {
+              if (video.dataset.loaded === "true") {
+                const playPromise = video.play();
+                if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => {});
+              }
+            };
+            if (video.readyState >= 2) play();
+            else video.addEventListener("loadeddata", play, { once: true });
+          } else {
+            video.pause();
+          }
+        });
+      }, { threshold: [0, 0.55, 0.85] });
+
+      videos.forEach((video) => {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.loop = true;
+        video.playsInline = true;
+        preloadObserver.observe(video);
+        playObserver.observe(video);
       });
     }
 
@@ -930,15 +1569,18 @@
               ? `<p class="compare-case-prompt compare-case-prompt--placeholder">${promptPlaceholder}</p>`
               : "");
         const modalPrompt = casePrompt || promptPlaceholder || "";
-        const cards = group.items.map((item) => `
-          <div class="showcase-card" data-title="${escapeAttr(item.title)}" data-group="${escapeAttr(group.title || "")}" data-prompt="${escapeAttr(item.prompt || modalPrompt)}" data-video="${escapeAttr(item.video || "")}">
-            <div class="video-shell">${item.video ? `<video src="${item.video}" autoplay muted loop playsinline preload="metadata"></video>` : "Reserved"}</div>
-            ${item.title || (showItemPrompt && item.prompt) ? `<div class="p-4">
+        const cards = group.items.map((item) => {
+          const itemPreview = promptPreview(item.video, item.prompt || modalPrompt);
+          return `
+          <div class="showcase-card" data-title="${escapeAttr(item.title)}" data-group="${escapeAttr(group.title || "")}" data-prompt="${escapeAttr(itemPreview)}" data-video="${escapeAttr(item.video || "")}">
+            <div class="video-shell">${item.video ? lazyVideoMarkup(item.video) : "Reserved"}</div>
+            ${item.title || itemPreview ? `<div class="p-4">
               ${item.title ? `<p class="font-semibold">${item.title}</p>` : ""}
-              ${showItemPrompt && item.prompt ? `<p class="text-sm text-slate-500 mt-1">${escapeHtml(item.prompt)}</p>` : ""}
+              ${itemPreview ? `<p class="text-sm text-slate-500 mt-1 prompt-preview">${escapeHtml(itemPreview)}</p>` : ""}
             </div>` : ""}
           </div>
-        `).join("");
+        `;
+        }).join("");
         sec.innerHTML = `
           ${showCaseTitle ? `<h3 class="subsection-heading text-xl font-bold mb-1">${group.title}</h3>` : ""}
           ${promptHtml}
@@ -964,12 +1606,20 @@
 
     makeMarqueeRows();
     buildShowcase();
+    if (oodHost) {
+      buildShowcase(OOD_GROUPS, oodHost);
+    }
     if (physicsConsistencyHost) {
       buildShowcase(PHYSICS_CONSISTENCY_GROUPS, physicsConsistencyHost);
+    }
+    if (locoHandManipulationHost) {
+      buildShowcase(LOCO_HAND_MANIPULATION_GROUPS, locoHandManipulationHost);
     }
     buildComparison("wo-moe-groups", WO_MOE_COMPARISON_ROWS, { promptPlaceholder: "", showItemPrompt: false });
     buildComparison("comparison-groups", COMPARISON_CASES, { showCaseTitle: false, promptPlaceholder: "" });
     buildComparison("comparison-handmotion-groups", HANDMOTION_COMPARISON_CASES, { showCaseTitle: false, promptPlaceholder: "" });
+    initLazyVideos();
+    configureTeaserYoutube();
     enforceAutoplay();
   </script>
 </body>
